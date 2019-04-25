@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="Bookmark" href="/favicon.ico" >
+    <link rel="Shortcut Icon" href="/favicon.ico" />
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="lib/html5shiv.js"></script>
+    <script type="text/javascript" src="lib/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+    <!--[if IE 6]>
+    <script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+    <script>DD_belatedPNG.fix('*');</script>
+    <![endif]-->
+    <title>中期报告信息列表</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 软工实训管理系统 <span class="c-gray en">&gt;</span> 实训报告 <span class="c-gray en">&gt;</span> 中期报告 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+    <form class="form form-horizontal" id="form_stu_middleReport_submit" method="post"  th:action="@{/submitMiddleReport}" onsubmit="submit_sure()">
+    <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="r">共有数据：<strong>[[${session.middleNum}]]</strong> 条</span> </div>
+    <table class="table table-border table-bordered table-bg">
+        <thead>
+        <tr>
+            <th scope="col" colspan="9">中期报告信息列表</th>
+        </tr>
+        <tr class="text-c">
+            <!--<th width="25"><input type="checkbox" name="" value=""></th>-->
+            <th width="40">序号</th>
+            <th width="130">提交时间</th>
+            <th width="90">成绩</th>
+            <th width="100">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr class="text-c" th:each="middleReport,memberStat:${resultList}" th:inline="none">
+            <td th:text="${middleReport.id}"/>
+            <td th:text="${middleReport.time_submit}"></td>
+            <td th:text="${middleReport.score}"/>
+            <td><a href="javascript:;" th:onclick="middleReportContent('[[${middleReport.content_midReport}]]','[[${middleReport.middleReview}]]')">浏览</a></td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <!--<form class="form form-horizontal" id="form_stu_weekReport_submit">-->
+        <div class="row cl">
+
+            <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+            <input type="checkbox" name="isAfter" value="补交" >
+            <label>补交</label>
+
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">报告内容</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <textarea name="middleReportContent" cols="" rows="" class="textarea"  placeholder="这段时间都干了什么呢？内容限制800字......" datatype="*10-100" dragonfly="true" nullmsg="备注不能为空！" onKeyUp="$.Huitextarealength(this,800)"></textarea>
+                <p class="textarea-numberbar"><em class="textarea-length">0</em>/800</p>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+    /*
+        参数解释：
+        title	标题
+        url		请求的url
+        id		需要操作的数据id
+        w		弹出层宽度（缺省调默认值）
+        h		弹出层高度（缺省调默认值）
+    */
+
+
+    /*管理员-编辑*/
+    function admin_edit(title,url,id,w,h){
+        layer_show(title,url,w,h);
+    }
+
+    function submit_sure(){
+        var gnl = confirm("确认要提交");
+        if(gnl==true){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    function middleReportContent(val1,val2) {
+
+        layer.open({
+            type: 1,
+            area: ['600px', '550px'],
+            fix: false, //不固定
+            maxmin: true,
+            shade: 0.4,
+            title: '我的中期报告信息',
+            content:
+                '<div class="page-container">'+
+                '<form action="" method="post" class="form form-horizontal" id="form-article-add">'+
+                '<div class="row cl">'+
+                '<label class="form-label col-xs-4 col-sm-2">中期报告内容</label>'+
+                '<div class="formControls col-xs-8 col-sm-9">'+
+                '<textarea name="" cols="" rows="" class="textarea" datatype="*10-100" placeholder="" dragonfly="true" onKeyUp="$.Huitextarealength(this,500)" disabled>'+val1+'</textarea>'+
+                '</div>'+
+                '</div>'+
+                '<div class="row cl">'+
+                '<label class="form-label col-xs-4 col-sm-2">中期报告周报评语：</label>'+
+                '<div class="formControls col-xs-8 col-sm-9">'+
+                '<textarea name="" cols="" rows="" class="textarea" datatype="*10-100" placeholder="" dragonfly="true" onKeyUp="$.Huitextarealength(this,500)" disabled>'+val2+'</textarea>'+
+                '</div>'+
+                '</div>'+
+                '</form>'+
+                '</div>'
+        });
+    }
+
+
+</script>
+</body>
+</html>

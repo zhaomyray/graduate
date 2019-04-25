@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
+    <title>软件学院实训管理平台</title>
+
+    <link  th:href="@{/css/login.css}" href="../static/css/login.css"  rel="stylesheet" rev="stylesheet" type="text/css" media="all"/>
+    <script type="text/javascript" th:src="@{/js/jQuery1.7.js}"  ></script>
+    <script type="text/javascript" th:src="@{/js/jquery-1.8.2.min.js}" ></script>
+    <script type="text/javascript" th:src="@{/js/jquery1.42.min.js}" ></script>
+    <script type="javascript" th:src="@{/js/jquery.SuperSlide.js}" ></script>
+    <script type="javascript" th:src="@{/js/Validform_v5.3.2_min.js}" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var $tab_li = $('#tab ul li');
+            $tab_li.hover(function () {
+                $(this).addClass('selected').siblings().removeClass('selected');
+                var login = $tab_li.index(this);
+                $('div.tab_box > div').eq(login).show().siblings().hide();
+            });
+        });
+    </script>
+
+    <!-- 背景图片切换 -->
+    <script type="text/javascript">
+        $(function () {
+            $(".screenbg ul li").each(function () {
+                $(this).css("opacity", "0");
+            });
+            $(".screenbg ul li:first").css("opacity", "1");
+            var login = 0;
+            var t;
+            var li = $(".screenbg ul li");
+            var number = li.size();
+
+            function change(login) {
+                li.css("visibility", "visible");
+                li.eq(login).siblings().animate({opacity: 0}, 3000);
+                li.eq(login).animate({opacity: 1}, 3000);
+            }
+
+            function show() {
+                login = login + 1;
+                if (login <= number - 1) {
+                    change(login);
+                } else {
+                    login = 0;
+                    change(login);
+                }
+            }
+            t = setInterval(show, 8000);
+            // //根据窗口宽度生成图片宽度
+            // var width = $(window).width();
+            // $(".screenbg ul img").css("width", width + "px");
+        });
+    </script>
+
+</head>
+<body>
+
+<div id="tab">
+    <ul class="tab_menu">
+        <li class="selected">学生登录</li>
+        <li>老师登录</li>
+    </ul>
+
+    <div class="tab_box">
+        <!-- 学生登录开始 -->
+        <div>
+            <div class="stu_box"></div>
+                <form action="stu_homePage.html" method="post" class="stu_login" th:action="@{/student/login}">
+                    <p style="color: red;" th:text="${stuMsg}" th:if="${not #strings.isEmpty(stuMsg)}"></p>
+                    <div id="studentUsername">
+
+                        <label>学&nbsp;&nbsp;&nbsp;号:</label>
+                        <input type="text" id="stu_username_hide" name="stu_username" placeholder="请输入学号" datatype="s6-18"/>
+                    </div>
+                    <div id="studentPassword">
+                        <label>密&nbsp;&nbsp;&nbsp;码:</label>
+                        <input type="password" id="stu_password_hide" name="stu_psd" placeholder="请输入密码" datatype="*6-16"/>
+                    </div>
+
+                    <div id="studentLogin">
+                        <button type="submit">登录</button>
+                    </div>
+                </form>
+        </div>
+
+        <!-- 学生登录结束 -->
+
+
+        <!-- 指导教师登录开始 -->
+        <div class="hide">
+            <div class="tea_box"></div>
+            <form action="tea_school_homePage.html" method="post" class="tea_login" th:action="@{/teacher/login}">
+                <p style="color: red;" th:text="${teaMsg}" th:if="${not #strings.isEmpty(teaMsg)}"></p>
+                <div id="teacherUsername">
+                    <label>教工号：</label>
+                    <input type="text" id="tea_username_hide" name="tea_username" placeholder="请输入教工号" datatype="s6-18"/>
+                </div>
+
+                <div id="teacherPassword">
+                    <label>密&nbsp;&nbsp;&nbsp;码：</label>
+                    <input type="password" id="tea_password_hide" name="tea_psd" placeholder="请输入密码" datatype="*6-16"/>
+                </div>
+
+                <div id="teacherRole">
+                    <input type="checkbox" id="tea_role_hide" name="tea_role" value="校外">校外指导老师
+                </div>
+
+                <div id="teacherLogin">
+                    <button type="submit">登录</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 指导教师登录结束 -->
+
+    </div>
+</div>
+
+<div class="bottom">
+    <p>
+        Copuright@copy;2018-2019 中原工学院软件学院<br>
+    </p>
+</div>
+
+<div class="screenbg">
+    <ul>
+        <li><a href="javascript:;"><img th:src="@{/img/1.jpg}" ></a></li>
+        <li><a href="javascript:;"><img th:src="@{/img/2.jpg}" ></a></li>
+        <li><a href="javascript:;"><img th:src="@{/img/3.jpg}" ></a></li>
+    </ul>
+</div>
+</body>
+</html>
