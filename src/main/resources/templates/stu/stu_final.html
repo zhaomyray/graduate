@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
@@ -26,7 +26,7 @@
 <body>
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 软工实训管理系统 <span class="c-gray en">&gt;</span> 实训报告  <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
-    <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="r">共有数据：<strong>54</strong> 条</span> </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="r">共有数据：<strong>[[${session.finalReportNum}]]</strong> 条</span> </div>
     <table class="table table-border table-bordered table-bg">
         <thead>
         <tr>
@@ -36,33 +36,38 @@
             <!--<th width="25"><input type="checkbox" name="" value=""></th>-->
             <th width="40">序号</th>
             <th width="130">提交时间</th>
-            <th width="150">实训报告地址</th>
-            <th width="150">实训项目地址</th>
-            <th width="90">批阅情况</th>
+            <th width="80">是否补交</th>
+            <th width="90">成绩</th>
             <th width="100">操作</th>
         </tr>
         </thead>
         <tbody>
-        <tr class="text-c">
-            <td>1</td>
-            <td>2019.3.1</td>
-            <td id="conURL">http://localhost:8080/reportContentURL</td>
-            <td id="codeURL">http://localhost:8080/codeContentURL</td>
-            <td>已批阅</td>
-            <td>浏览</td>
+
+        <tr class="text-c" th:each="finalReport,memberStat:${finalReportList}" th:inline="none">
+            <td th:text="${memberStat.count}"/>
+            <td th:text="${finalReport.time_submit}"></td>
+            <td th:text="${finalReport.isAfter}"></td>
+            <td th:text="${finalReport.score}"/>
+            <td>
+                <form th:action="@{/fileReportDownload}" method="post" class="form-horizontal" id="form_finalReport_submit" enctype="multipart/form-data">
+                    <input type="text" th:value="${finalReport.add_finReport}" id="finReportFilePath" name="finReportFilePath" style="display: none">
+                    <input class="btn btn-primary radius" type="submit"  value="&nbsp;&nbsp;下载报告&nbsp;&nbsp;">
+                </form>
+                <form th:action="@{/fileProjectDownload}" method="post" class="form-horizontal" id="form_finalProject_submit" enctype="multipart/form-data">
+                    <input type="text" th:value="${finalReport.add_finalProject}" id="finProjectFilePath" name="finProjectFilePath" style="display: none">
+                    <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;下载项目&nbsp;&nbsp;">
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>
 
-    <form action="" method="post" class="form form-horizontal" id="form_final_submit">
+    <form th:action="@{/fileUpload}" method="post" class="form form-horizontal" id="form_final_submit" enctype="multipart/form-data">
         <br>
         <br>
-
-
-        <!--<div class="row cl">-->
-            <!--<label class="form-label col-xs-4 col-sm-3"><input  type="checkbox" value="补交" />补交</label>-->
-        <!--</div>-->
-
+        <div>
+            <input type="text" name="finalBan" id="finalBan" value="" style="display: none">
+        </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-3">实训报告附件：</label>
             <div class="formControls col-xs-8 col-sm-9"> <span class="btn-upload form-group">
@@ -85,7 +90,7 @@
 
         <div class="row cl">
             <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                <input class="btn btn-primary radius" type="submit" th:onclick="submit_sure('[[${session.finalBeginTime}]]','[[${session.finalEndTime}]]','[[${session.finalReportScore}]]','[[${session.finalStartBJ}]]')" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
             </div>
         </div>
     </form>
@@ -103,20 +108,85 @@
 <script type="text/javascript" src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>
 <script type="text/javascript">
-    /*
-        参数解释：
-        title	标题
-        url		请求的url
-        id		需要操作的数据id
-        w		弹出层宽度（缺省调默认值）
-        h		弹出层高度（缺省调默认值）
-    */
+
+    function submit_sure(valBeginTime,valEndTime,valScore,valStartBJ){
+
+        var filePath = document.getElementById("uploadfile1").value;
+        var projectPath = document.getElementById("uploadfile2").value;
+        var nullFlag ;
+        if(filePath.length==0){
+            if(projectPath.length==0){
+                nullFlag = 0;
+            }else{
+                nullFlag = 0;
+            }
+        }else{
+            if(projectPath.length==0){
+                nullFlag = 0;
+            }else{
+                nullFlag = 1;
+            }
+        }
+
+        var b1 = valBeginTime.substring(1,valBeginTime.length-1);
+        var b2 = valEndTime.substring(1,valEndTime.length-1);
+        var score = valScore.substring(1,valScore.length-1);
+        var startBJ = valStartBJ.substring(1,valStartBJ.length-1);
+
+        var dateBegin = new Date(b1);
+        var dateEnd = new Date(b2);
+        var dateNow = new Date();//获取当前时间
+
+        //计算实训报告开始的时间，如果现在的时间与开始时间的差<0,说明还没到开始时间，不能操作
+        var beginDiff = dateNow.getTime() - dateBegin.getTime();//时间差的毫秒数
+        var beginDayDiff = Math.floor(beginDiff / (24 * 3600 * 1000));//计算出相差天数
+        //实训报告和项目：计算结束时间，如果实训报告的结束时间与现在时间的差小于0，说明已经超过结束时间，无法提交报告
+        var endDiff = dateEnd.getTime() - dateNow.getTime();//时间差的毫秒数
+        var endDayDiff = Math.floor(endDiff / (24 * 3600 * 1000));//计算出相差天数
+
+        if(beginDayDiff<0){//没到开始时间
+            document.getElementById("finalBan").value="无法提交";
+            alert("当前时间是：" + dateNow + "，未到操作时间！");
+        }else{//已到开始时间
+            if (nullFlag==1){
+                alert("score:"+score);
+                if(score=="0"||score=="未提交"){//没有提交报告或者提交了报告但分数为0，就有机会重新提交
+                    if(endDayDiff<0){//已经超过提交结束时间
+                        if(startBJ=="1"){//补交开关已打开，可以提交报告，默认为补交
+                            document.getElementById("finalBan").value="补交";
+                            alert("当前时间是：" + dateNow + "，已经超过正常提交时间，默认为补交！");
+                        }else{//补交开关未打开，不能提交报告
+                            document.getElementById("finalBan").value="无法提交";
+                            alert("当前时间是：" + dateNow + "，已经超过提交时间，无法提交！");
+                        }
+                    }else{//未超过提交结束时间，可以正常提交
+                        document.getElementById("finalBan").value="正常提交";
+                        alert("当前时间是：" + dateNow + "，此次报告正常提交！");
+                    }
+                }else{//报告已经被批阅，无法重新提交
+                    document.getElementById("finalBan").value="无法提交";
+                    alert("报告已经被批阅，无法重新提交！");
+                }
+            }else{
+                alert("报告和项目附件不能为空！");
+            }
 
 
-    /*管理员-编辑*/
-    function admin_edit(title,url,id,w,h){
-        layer_show(title,url,w,h);
+        }
+
+        if(finalSubmit==1){
+            if(finalScore == "未提交"){
+
+            }else if(finalScore==0){
+                alert("重复提交会覆盖上次提交的文件！");
+            }else{
+                alert("该报告已被审阅,操作有误！");
+            }
+        }else{
+            alert("未到提交时间！");
+        }
     }
+
 
 </script>
 </body>

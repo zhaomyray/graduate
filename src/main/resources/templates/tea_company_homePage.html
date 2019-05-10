@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
@@ -36,8 +36,7 @@
                     <li class="dropDown dropDown_hover">
                         <a href="#" class="dropDown_A">[[${session.login}]] <i class="Hui-iconfont">&#xe6d5;</i></a>
                         <ul class="dropDown-menu menu radius box-shadow">
-                            <li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
-                            <li><a href="#">修改密码</a></li>
+                            <li><a  data-href="/tea_company_updatePassword.html" th:onclick="updatePsd('修改密码','tea_company_updatePassword.html')">修改密码</a></li>
                             <li><a href="#">退出</a></li>
                         </ul>
                     </li>
@@ -136,6 +135,13 @@
 <script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
 <script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
 <script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+<script type="text/javascript">
 
+    function updatePsd(title,url){
+        layer_show(title,url);
+    }
+
+
+</script>
 </body>
 </html>

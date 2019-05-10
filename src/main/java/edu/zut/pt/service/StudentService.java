@@ -13,9 +13,16 @@ public interface StudentService {
     public Student findStudentBySnoPsd(String sno, String password);
 
     /**
+     * 根据学生的学号查找密码
+     * @param sno
+     * @return
+     */
+    public String findStudentPsdBySno(String sno);
+
+    /**
      * 修改密码
      * @param student
      * @return
      */
-    public Student updateStudentPsd(Student student);
+    public int updateStudentPsd(Student student);
 }

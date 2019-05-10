@@ -37,7 +37,9 @@
                 <th width="60">学号</th>
                 <th width="60">提交时间</th>
                 <th width="30">是否补交</th>
+                <th width="30">报告状态</th>
                 <th width="30">成绩</th>
+                <th width="50">下载</th>
                 <th width="40">操作</th>
             </tr>
             </thead>
@@ -47,9 +49,17 @@
                 <td th:text="${schStuMiddleReport.middleSno}"/>
                 <td th:text="${schStuMiddleReport.time_submit}"/>
                 <td th:text="${schStuMiddleReport.isAfter}"/>
+                <td th:text="${schStuMiddleReport.isUpdate}">
                 <td th:text="${schStuMiddleReport.score}"/>
                 <td>
-                    <a href="javascript:void(0)" th:onclick="inputMiddleReport('[[${schStuMiddleReport.content_midReport}]]','[[${schStuMiddleReport.middleSno}]]')">浏览</a>
+                    <form th:action="@{/schTeaMiddleReportDownload}" method="post" class="form-horizontal" id="form_schTeaMiddleReport_submit" enctype="multipart/form-data">
+                        <input type="text" th:value="${schStuMiddleReport.middleReportFilePath}" id="schTeaMiddleReportFilePath" name="schTeaMiddleReportFilePath" style="display: none">
+                        <input type="text" th:value="${schStuMiddleReport.middleSno}" id="schTeaMiddleReportSno" name="schTeaMiddleReportSno" style="display: none">
+                        <input style="background:honeydew; border:0px" type="submit" th:onclick="downloadWeekFile_sure('[[${schStuMiddleReport.middleReportFilePath}]]')" value="&nbsp;&nbsp;下载报告&nbsp;&nbsp;">
+                    </form>
+                </td>
+                <td>
+                    <a href="javascript:void(0)" th:onclick="inputMiddleReport('[[${schStuMiddleReport.content_midReport}]]','[[${schStuMiddleReport.middleSno}]]','[[${schStuMiddleReport.time_submit}]]')">浏览</a>
                 </td>
             </tr>
             </tbody>
@@ -57,43 +67,45 @@
 
     <!--</form>-->
 </div>
-<form class="form form-horizontal" id="form_teaSch_stuMiddleScore" method="post"  th:action="@{/teaSchStuMiddleInsertBySno}" onsubmit="submit_sure()">
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <input type="text" class="input-text" value="" placeholder="" id="middleReportSno" name="middleSno" readonly="true">
-        </div>
-    </div>
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2">报告内容：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <textarea id="stuMiddleReportContent" name="stuMiddleReportContent" cols="" rows="" class="textarea"  placeholder="" onKeyUp="$.Huitextarealength(this,800)" disabled></textarea>
-            <p class="textarea-numberbar"><em class="textarea-length">0</em>/800</p>
-        </div>
-    </div>
+<!--<form class="form form-horizontal" id="form_teaSch_stuMiddleScore" method="post"  th:action="@{/teaSchStuMiddleInsertBySno}" onsubmit="submit_sure()">-->
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<input type="text" class="input-text" value="" placeholder="" id="middleReportSno" name="middleSno" readonly="true">-->
+            <!--<input type="text" value="" id="middleReportTime" name="middleReportTime">-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2">报告内容：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<textarea id="stuMiddleReportContent" name="stuMiddleReportContent" cols="" rows="" class="textarea"  placeholder="" onKeyUp="$.Huitextarealength(this,800)" disabled></textarea>-->
+            <!--<p class="textarea-numberbar"><em class="textarea-length">0</em>/800</p>-->
+        <!--</div>-->
+    <!--</div>-->
 
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <input type="text" class="input-text" value="0" placeholder="分数为整数" id="middleScore" name="middleScore">
-        </div>
-    </div>
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<input type="text" class="input-text" value="0" placeholder="分数为整数" id="middleScore" name="middleScore">-->
+        <!--</div>-->
+    <!--</div>-->
 
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2">批语：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <textarea id="middleReview" name="middleReview" cols="" rows="" class="textarea"  placeholder="说点什么..." onKeyUp="$.Huitextarealength(this,200)"></textarea>
-            <!--<p class="textarea-numberbar"><em class="textarea-length">0</em>/200</p>-->
-        </div>
-    </div>
-    <div class="row cl">
-        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-            <input class="btn btn-primary radius" type="submit" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
-            <input class="btn btn-primary radius" type="reset" value="&nbsp;&nbsp;重置&nbsp;&nbsp;">
-        </div>
-    </div>
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2">批语：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<textarea id="middleReview" name="middleReview" cols="" rows="" class="textarea"  placeholder="说点什么..." onKeyUp="$.Huitextarealength(this,200)"></textarea>-->
+            <!--&lt;!&ndash;<p class="textarea-numberbar"><em class="textarea-length">0</em>/200</p>&ndash;&gt;-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row cl">-->
+        <!--<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">-->
+            <!--<input type="text" value="" id="isSubmit" name="isSubmit">-->
+            <!--<input class="btn btn-primary radius" type="submit" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">-->
+            <!--<input class="btn btn-primary radius" type="reset" value="&nbsp;&nbsp;重置&nbsp;&nbsp;">-->
+        <!--</div>-->
+    <!--</div>-->
 
-</form>
+<!--</form>-->
 
 <!--_footer 作为公共模版分离出去-->
 <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
@@ -121,28 +133,104 @@
         layer_show(title,url,w,h);
     }
 
-    function inputMiddleReport(val1,val2){
-        var t1 = document.getElementById("stuMiddleReportContent");
-        if(val1==0){
-            t1.value="未提交报告";
-        }else{
-            t1.value=val1;
-        }
-        document.getElementById("middleReportSno").value=val2;
+    function inputMiddleReport(val1,val2,val3){
+        // var t1 = document.getElementById("stuMiddleReportContent");
+        // var content = val1.substring(1,val1.length-1);
+        // t1.value = content;
+        // document.getElementById("middleReportSno").value=val2.substring(1,val2.length-1);
+        // document.getElementById("middleReportTime").value=val3.substring(1,val3.length-1);
+
+        var content = val1.substring(1,val1.length-1);
+        var sno = val2.substring(1,val2.length-1);
+        var time = val3.substring(1,val3.length-1);
+
+        layer.open({
+            type: 1,
+            area: ['750px', '550px'],
+            fix: false, //不固定
+            btnAlign: 'c',
+            maxmin: true,
+            shade: 0.4,
+            title: '周报信息',
+            content:'<form class="form form-horizontal" id="form_teaSch_stuMiddleScore" method="post"  th:action="@{/teaSchStuMiddleInsertBySno}" onsubmit="submit_sure()">\n' +
+                '    <div class="row cl">\n' +
+                '        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>\n' +
+                '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                '            <input type="text" class="input-text" value="'+sno+'" placeholder="" id="middleReportSno" name="middleSno" readonly="true">\n' +
+                '            <input type="text" value="'+time+'" id="middleReportTime" name="middleReportTime">\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '    <div class="row cl">\n' +
+                '        <label class="form-label col-xs-4 col-sm-2">报告内容：</label>\n' +
+                '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                '            <textarea id="stuMiddleReportContent" name="stuMiddleReportContent" cols="" rows="" class="textarea"  placeholder="" onKeyUp="$.Huitextarealength(this,800)" disabled>'+content+'</textarea>\n' +
+                '            <p class="textarea-numberbar"><em class="textarea-length">0</em>/800</p>\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '\n' +
+                '    <div class="row cl">\n' +
+                '        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>\n' +
+                '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                '            <input type="text" class="input-text" value="0" placeholder="分数为整数" id="middleScore" name="middleScore">\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '\n' +
+                '    <div class="row cl">\n' +
+                '        <label class="form-label col-xs-4 col-sm-2">批语：</label>\n' +
+                '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                '            <textarea id="middleReview" name="middleReview" cols="" rows="" class="textarea"  placeholder="说点什么..." onKeyUp="$.Huitextarealength(this,200)"></textarea>\n' +
+                '            <!--<p class="textarea-numberbar"><em class="textarea-length">0</em>/200</p>-->\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '    <div class="row cl">\n' +
+                '        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">\n' +
+                '            <input type="text" value="" id="isSubmit" name="isSubmit">\n' +
+                '            <input class="btn btn-primary radius" type="submit" id="submitMiddleScore" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '\n' +
+                '</form>',
+            btn:['提交','取消'],
+            btn1:function(){
+                $('#submitMiddleScore').submit();
+                var sno = document.getElementById("middleReportSno").value;
+                var review = document.getElementById("middleReview").value;
+                var isSubmit = document.getElementById("isSubmit").value;
+                var score = document.getElementById("middleScore").value;
+
+                $.post("/teaSchStuMiddleInsertBySno/"+sno+","+review+","+isSubmit+","+score);
+                layer.closeAll();
+            }
+        });
+
     }
 
     function submit_sure(){
         var stu = document.getElementById("middleReportSno").value;
-        var a = document.getElementById("stuMiddleReportContent").value;
+        var time = document.getElementById("middleReportTime").value;
+        var score = document.getElementById("middleScore").value;
+
         if(stu==""){
+            document.getElementById("isSubmit").value="无法提交";
             alert("未选中学生");
             return false;
         }else {
-            if(a=="null"||a==""){
+            if(time=="---") {
+                document.getElementById("isSubmit").value="无法提交";
                 alert("该生未提交报告");
-                return false;
+            }else if(isNaN(score)||score<0||score>100||!(/^\d+$/.test(score))){
+                document.getElementById("isSubmit").value="无法提交";
+                alert("成绩需要为0~100的整数！");
+            }else{
+                document.getElementById("isSubmit").value="提交";
             }
-            return true;
+        }
+    }
+
+    function downloadWeekFile_sure(valFilePath){
+        var middleFilePath = valFilePath.substring(1,valFilePath.length-1);
+        if(middleFilePath=="未提交报告"){
+            alert("该生未提交报告！");
         }
     }
 

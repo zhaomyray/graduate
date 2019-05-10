@@ -10,8 +10,8 @@ public class FinalReport {
     //学生学号
     private String finalSno;
     //实训报告地址
-    private String add_finalReport;
-    //实训项目地市
+    private String add_finReport;
+    //实训项目地址
     private String add_finalProject;
     //实训成绩
     private int score;
@@ -21,6 +21,9 @@ public class FinalReport {
     private String isAfter;
     //实训评语
     private String reportReview;
+    //报告状态
+    private String isUpdate;
+
 
     public int getId() {
         return id;
@@ -30,8 +33,8 @@ public class FinalReport {
         return finalSno;
     }
 
-    public String getAdd_finalReport() {
-        return add_finalReport;
+    public String getAdd_finReport() {
+        return add_finReport;
     }
 
     public String getAdd_finalProject() {
@@ -62,8 +65,8 @@ public class FinalReport {
         this.finalSno = finalSno;
     }
 
-    public void setAdd_finalReport(String add_finalReport) {
-        this.add_finalReport = add_finalReport;
+    public void setAdd_finReport(String add_finReport) {
+        this.add_finReport = add_finReport;
     }
 
     public void setAdd_finalProject(String add_finalProject) {
@@ -84,5 +87,13 @@ public class FinalReport {
 
     public void setReportReview(String reportReview) {
         this.reportReview = reportReview;
+    }
+
+    public String getIsUpdate() {
+        return isUpdate;
+    }
+
+    public void setIsUpdate(String isUpdate) {
+        this.isUpdate = isUpdate;
     }
 }

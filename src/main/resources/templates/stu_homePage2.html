@@ -37,12 +37,10 @@
                         <!--<a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>-->
                         <a href="#" class="dropDown_A">[[${session.login}]] <i class="Hui-iconfont">&#xe6d5;</i></a>
                         <ul class="dropDown-menu menu radius box-shadow">
-                            <li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
-                            <li><a href="#">修改密码</a></li>
+                            <li><a  data-href="/updatePsd.html" th:onclick="updatePsd('修改密码','updatePsd.html')">修改密码</a></li>
                             <li><a href="#">退出</a></li>
                         </ul>
                     </li>
-                    <li id="Hui-msg"> <a href="#" title="消息"><span class="badge badge-danger">1</span><i class="Hui-iconfont" style="font-size:18px">&#xe6c4;</i></a> </li>
                     <li id="Hui-skin" class="dropDown right dropDown_hover"> <a href="javascript:;" class="dropDown_A" title="换肤"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></a>
                         <ul class="dropDown-menu menu radius box-shadow">
                             <li><a href="javascript:;" data-val="default" title="默认（黑色）">默认（黑色）</a></li>
@@ -75,6 +73,7 @@
                     <!--data-href="stu_myPTInfo"-->
                     <li><a data-href="stu_myPTInfo" data-title="实训信息" href="javascript:void(0)">实训信息</a></li>
                     <li><a data-href="stu_approvalTable" data-title="选题审批表" href="javascript:void(0)">选题审批表</a></li>
+                    <li><a data-href="stu_ptScore" data-title="成绩" href="javascript:void(0)">成绩</a></li>
                 </ul>
             </dd>
         </dl>
@@ -138,34 +137,10 @@
 <!--请在下方写此页面业务相关的脚本-->
 <script type="text/javascript" src="lib/jquery.contextmenu/jquery.contextmenu.r2.js"></script>
 <script type="text/javascript">
-    <!--$(function(){-->
-        <!--$("#min_title_list li").contextMenu('Huiadminmenu', {-->
-            <!--bindings: {-->
-                <!--'closethis': function(t) {-->
-                    <!--console.log(t);-->
-                    <!--if(t.find("i")){-->
-                        <!--t.find("i").trigger("click");-->
-                        <!--}-->
-                    <!--},-->
-                <!--'closeall': function(t) {-->
-                    <!--alert('Trigger was '+t.id+'\nAction was Email');-->
-                    <!--},-->
-                <!--}-->
-            <!--});-->
-        <!--});-->
-        /*个人信息*/
-        function myselfinfo(){
-            layer.open({
-                type: 1,
-                area: ['300px','200px'],
-                fix: false, //不固定
-                maxmin: true,
-                shade:0.4,
-                title: '查看信息',
-                content: '<div>我的信息</div>'
-            });
-        }
 
+    function updatePsd(title,url){
+        layer_show(title,url);
+    }
 
 </script>
 

@@ -6,23 +6,23 @@ package edu.zut.pt.pojo;
 public class Teacher_School {
 
     //登录id
-    private String id;
+    private String tno;
     //密码
     private String password;
 
-    public String setId(){
-        return id;
+    public String getTno() {
+        return tno;
     }
 
-    public String setPassword(){
+    public void setTno(String tno) {
+        this.tno = tno;
+    }
+
+    public String getPassword() {
         return password;
     }
 
-    public void getId(String id){
-        this.id = id;
-    }
-
-    public void getPassword(String password){
+    public void setPassword(String password) {
         this.password = password;
     }
 }

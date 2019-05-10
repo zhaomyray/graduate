@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
@@ -21,7 +21,7 @@
 </head>
 <body>
 <div class="pd-20">
-    <form class="Huiform" id="loginform" action="" method="post">
+    <form class="Huiform" id="loginform" action="/updateSubmit" method="post">
         <table class="table table-border table-bordered table-bg">
             <thead>
             <tr>
@@ -47,7 +47,8 @@
             <tr>
                 <th></th>
                 <td>
-                    <button type="submit" class="btn btn-success radius" id="admin-password-save" name="admin-password-save"><i class="icon-ok"></i> 确定</button>
+                    <button type="submit" class="btn btn-success radius" id="admin-password-save" name="admin-password-save" th:onclick="submit_sure('[[${session.findOldPsd}]]')" ><i class="icon-ok"></i> 确定</button>
+                    <button type="reset" class="btn btn-success radio" id="admin-password-reset" name="admin_password-reset">重置</button>
                 </td>
             </tr>
             </tbody>
@@ -60,18 +61,27 @@
 <script type="text/javascript" src="js/H-ui.js"></script>
 <script type="text/javascript" src="js/H-ui.admin.js"></script>
 <script type="text/javascript">
-    $(".Huiform").Validform();
-</script>
-<script>
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "//hm.baidu.com/hm.js?080836300300be57b7f34f4b3e97d911";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-    var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-    document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F080836300300be57b7f34f4b3e97d911' type='text/javascript'%3E%3C/script%3E"));
+
+    function submit_sure(val){
+        var findOldPsd = val.substring(1,val.length-1);
+        var oldPsd = document.getElementById("oldpassword").value;
+        var newPsd = document.getElementById("newpassword").value;
+        var newPsdSure = document.getElementById("newpassword2").value;
+        if(oldPsd==findOldPsd){
+            if(newPsd==newPsdSure){
+                alert("修改成功!");
+                return true;
+            }else{
+                alert("新密码与确认密码不一致！无法修改！");
+                return false;
+            }
+        }else{
+            alert("旧密码输入错误！无法修改！");
+            return false;
+        }
+
+    }
+
 </script>
 </body>
 </html>

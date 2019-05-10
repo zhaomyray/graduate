@@ -31,12 +31,21 @@ public interface Teacher_CompanyMapper {
     public String findTeaNameByTno(String tno);
 
     /**
+     * 根据老师的学工号查找密码
+     * @param tno
+     * @return
+     */
+    @Select("select password from tb_login_comtea where tno=#{tno}")
+    public String findTeaComPsdByTno(String tno);
+
+
+    /**
      *修改密码
      * 根据教工号修改登录密码
      * @param teacher_company
      * @return
      */
     @Update("update tb_login_comtea set password=#{password} where tno=#{tno}")
-    public Teacher_Company updateTeaComPsd(Teacher_Company teacher_company);
+    public int updateTeaComPsd(Teacher_Company teacher_company);
 
 }

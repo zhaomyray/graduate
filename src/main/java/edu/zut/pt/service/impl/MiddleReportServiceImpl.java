@@ -20,6 +20,16 @@ public class MiddleReportServiceImpl implements MiddleReportService {
     }
 
     @Override
+    public int updateMiddleReport(String middleSno, String content_midReport, String time_submit, String isAfter,String middleReportFilePath,String middleReportIsUpdate) {
+        return this.middleReportMapper.updateMiddleReport(middleSno,content_midReport,time_submit,isAfter,middleReportFilePath,middleReportIsUpdate);
+    }
+
+    @Override
+    public int updateMiddleReportIsUpdate(String middleReportIsUpdate, String middleSno) {
+        return this.middleReportMapper.updateMiddleReportIsUpdate(middleReportIsUpdate,middleSno);
+    }
+
+    @Override
     public List<MiddleReport> findMiddleReportBySno(String middleSno) {
         return this.middleReportMapper.findMiddleReportBySno(middleSno);
     }

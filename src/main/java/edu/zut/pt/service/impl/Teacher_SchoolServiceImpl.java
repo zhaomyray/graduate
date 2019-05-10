@@ -23,7 +23,12 @@ public class Teacher_SchoolServiceImpl implements Teacher_SchoolService {
     }
 
     @Override
-    public Teacher_School updateTeaSchPsd(Teacher_School teacher_school) {
+    public String findTeaSchPsdByTno(String tno) {
+        return this.teacher_schoolMapper.findTeaSchPsdByTno(tno);
+    }
+
+    @Override
+    public int updateTeaSchPsd(Teacher_School teacher_school) {
         return this.teacher_schoolMapper.updateTeaSchPsd(teacher_school);
     }
 }

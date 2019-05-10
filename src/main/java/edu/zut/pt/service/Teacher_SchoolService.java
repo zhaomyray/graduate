@@ -20,11 +20,18 @@ public interface Teacher_SchoolService {
     public String findTeaSchByTno(String tno);
 
     /**
+     * 根据学工号查找密码
+     * @param tno
+     * @return
+     */
+    public String findTeaSchPsdByTno(String tno);
+
+    /**
      * 修改密码
      * @param teacher_school
      * @return
      */
-    public Teacher_School updateTeaSchPsd(Teacher_School teacher_school);
+    public int updateTeaSchPsd(Teacher_School teacher_school);
 
 
 }

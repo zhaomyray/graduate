@@ -31,13 +31,21 @@ public interface Teacher_SchoolMapper {
     public String findTeaSchByTno(String tno);
 
     /**
+     * 根据老师的学工号查找密码
+     * @param tno
+     * @return
+     */
+    @Select("select password from tb_login_schtea where tno=#{tno}")
+    public String findTeaSchPsdByTno(String tno);
+
+    /**
      *修改密码
      * 根据教工号修改登录密码
      * @param teacher_school
      * @return
      */
     @Update("update tb_login_schtea set password=#{password} where tno=#{tno}")
-    public Teacher_School updateTeaSchPsd(Teacher_School teacher_school);
+    public int updateTeaSchPsd(Teacher_School teacher_school);
 
 
 }

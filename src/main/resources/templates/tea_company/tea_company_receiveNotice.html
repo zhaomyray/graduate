@@ -81,7 +81,7 @@
     }
 
     function noticeContent(val) {
-
+        var val1 = val.substring(4,val.length-5);
         layer.open({
             type: 1,
             area: ['450px', '400px'],
@@ -96,7 +96,7 @@
                 '<label class="form-label col-xs-4 col-sm-2">公告内容：</label>'+
                 '</div><br>'+
                 '<div class="formControls">'+
-                '<textarea name="" cols=""  rows="" class="textarea" datatype="*10-100" placeholder="" dragonfly="true" onKeyUp="$.Huitextarealength(this,500)" disabled>'+val+'</textarea>'+
+                '<textarea name="" cols=""  rows="" class="textarea" datatype="*10-100" placeholder="" dragonfly="true" onKeyUp="$.Huitextarealength(this,500)" disabled>'+val1+'</textarea>'+
                 '</div>'+
                 '</form>'+
                 '</div>'

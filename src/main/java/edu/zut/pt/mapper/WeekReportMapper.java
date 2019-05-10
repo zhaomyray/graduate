@@ -18,7 +18,7 @@ public interface WeekReportMapper {
      * @param weekReport
      * @return
      */
-    @Insert("insert into tb_info_weekreport(weekSno,content_weekReport,weekMessage,time_submit,isAfter) value(#{weekSno},#{content_weekReport},#{weekMessage},#{time_submit},#{isAfter})")
+    @Insert("insert into tb_info_weekreport(weekSno,content_weekReport,score,weekMessage,time_submit,isAfter,weekReview,weekReportFilePath) value(#{weekSno},#{content_weekReport},#{score},#{weekMessage},#{time_submit},#{isAfter},#{weekReview},#{weekReportFilePath})")
     public int insertWeekReport(WeekReport weekReport);
 
 

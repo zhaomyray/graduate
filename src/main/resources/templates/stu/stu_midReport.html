@@ -26,7 +26,7 @@
 <body>
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 软工实训管理系统 <span class="c-gray en">&gt;</span> 实训报告 <span class="c-gray en">&gt;</span> 中期报告 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
-    <form class="form form-horizontal" id="form_stu_middleReport_submit" method="post"  th:action="@{/submitMiddleReport}" onsubmit="submit_sure()">
+
     <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="r">共有数据：<strong>[[${session.middleNum}]]</strong> 条</span> </div>
     <table class="table table-border table-bordered table-bg">
         <thead>
@@ -37,7 +37,9 @@
             <!--<th width="25"><input type="checkbox" name="" value=""></th>-->
             <th width="40">序号</th>
             <th width="130">提交时间</th>
+            <th width="50">是否补交</th>
             <th width="90">成绩</th>
+            <th width="50">下载</th>
             <th width="100">操作</th>
         </tr>
         </thead>
@@ -46,31 +48,44 @@
         <tr class="text-c" th:each="middleReport,memberStat:${resultList}" th:inline="none">
             <td th:text="${middleReport.id}"/>
             <td th:text="${middleReport.time_submit}"></td>
+            <td th:text="${middleReport.isAfter}"/>
             <td th:text="${middleReport.score}"/>
+            <td>
+                <form th:action="@{/middleFileReportDownload}" method="post" class="form-horizontal" id="form_middleReport_submit" enctype="multipart/form-data">
+                    <input type="text" th:value="${middleReport.middleReportFilePath}" id="middleReportFilePath" name="middleReportFilePath" style="display: none">
+                    <input class="btn btn-primary radius" type="submit" th:onclick="downloadMiddleFile_sure('[[${middleReport.middleReportFilePath}]]')" value="&nbsp;&nbsp;下载报告&nbsp;&nbsp;">
+                </form>
+            </td>
             <td><a href="javascript:;" th:onclick="middleReportContent('[[${middleReport.content_midReport}]]','[[${middleReport.middleReview}]]')">浏览</a></td>
         </tr>
 
         </tbody>
     </table>
 
-    <!--<form class="form form-horizontal" id="form_stu_weekReport_submit">-->
+        <form class="form form-horizontal" id="form_stu_middleReport_submit" method="post"  th:action="@{/submitMiddleReport}" onsubmit="submit_sure()" enctype="multipart/form-data">
         <div class="row cl">
-
             <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-            <input type="checkbox" name="isAfter" value="补交" >
-            <label>补交</label>
+            <input type="text" name="middleBan" id="middleBan" value="" style="display: none">
 
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2">报告内容</label>
             <div class="formControls col-xs-8 col-sm-9">
-                <textarea name="middleReportContent" cols="" rows="" class="textarea"  placeholder="这段时间都干了什么呢？内容限制800字......" datatype="*10-100" dragonfly="true" nullmsg="备注不能为空！" onKeyUp="$.Huitextarealength(this,800)"></textarea>
-                <p class="textarea-numberbar"><em class="textarea-length">0</em>/800</p>
+                <textarea name="middleReportContent" id="middleReportContent" cols="" rows="" class="textarea"  placeholder="这段时间都干了什么呢？内容限制800字......" datatype="*10-100" dragonfly="true" nullmsg="备注不能为空！" onKeyUp="$.Huitextarealength(this,800)"></textarea>
+                <p class="textarea-numberbar"><em class="textarea-length" id="textNum">0</em>/800</p>
             </div>
         </div>
         <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">中期报告附件：</label>
+            <div class="formControls col-xs-8 col-sm-9"> <span class="btn-upload form-group">
+				<input class="input-text upload-url" type="text" name="addMiddleFile" id="addMiddleFile" readonly nullmsg="请添加附件！" style="width:200px">
+				<a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 浏览文件</a>
+				<input type="file" multiple name="uploadMiddleFile" class="input-file">
+				</span> </div>
+        </div>
+        <div class="row cl">
             <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                <input class="btn btn-primary radius" type="submit" th:onclick="submit_sure('[[${session.middleBeginTime}]]','[[${session.middleEndTime}]]','[[${session.middleScore}]]','[[${session.middleBanTime}]]','[[${session.startMiddleBJ}]]')" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
             </div>
         </div>
     </form>
@@ -101,16 +116,108 @@
         layer_show(title,url,w,h);
     }
 
-    function submit_sure(){
-        var gnl = confirm("确认要提交");
-        if(gnl==true){
-            return true;
-        }else{
-            return false;
+    //文本框内的字数动态显示
+    $('#middleReportContent').on("keyup",function(){
+        $('#textNum').text($('#middleReportContent').val().length);//键盘按下时，实时的显示数字
+        if($('#middleReportContent').val().length>800){
+            $('#textNum').text(800);
+            $('#middleReportContent').val($('#middleReportContent').val().substring(0,800));//长度大于600，截取前600个字符
+        }
+    })
+
+    function downloadMiddleFile_sure(valPath){
+        var middleFile = valPath.substring(1,valPath.length-1);
+        if(middleFile=="未提交文件"){
+            alert("未提交文件，下载失败！");
         }
     }
-    function middleReportContent(val1,val2) {
 
+    function submit_sure(val1,val2,val3,val4,valStartBJ){
+
+        var content = document.getElementById("middleReportContent").value;
+        var filePath = document.getElementById("addMiddleFile").value;
+        var nullFlag ;
+        if(content.length==0){
+            if(filePath.length==0){
+                nullFlag = 0;
+            }else{
+                nullFlag = 1;
+            }
+        }else{
+            nullFlag = 1;
+        }
+
+        //中期报告开始提交时间
+        var d1 = val1.substring(1,val1.length-1);
+        //中期报告正常提交截止时间
+        var d2 = val2.substring(1,val2.length-1);
+        //中期报告补交截止时间
+        var d3 = val4.substring(1,val3.length-1);
+        //中期报告分数
+        var middleScore = val3;
+        //中期报告补交开关
+        var startBJ = valStartBJ.substring(1,valStartBJ.length-1);
+
+        var dateBegin = new Date(d1);//将-转化为/，使用new Date
+        var dateEnd1 = new Date(d2);//将-转化为/，使用new Date
+        var dateBan = new Date(d3);
+        var dateNow = new Date();//获取当前时间
+
+        //计算开始的时间，如果现在的时间与开始时间的差<0,说明还没到开始时间，不能操作
+        var beginDiff = dateNow.getTime() - dateBegin.getTime();//时间差的毫秒数
+        var beginDayDiff = Math.floor(beginDiff / (24 * 3600 * 1000));//计算出相差天数
+        //中期报告：计算正常提交结束时间，如果结束时间与现在时间的差小于0，说明已经超过结束时间，提交的报告默认为补交
+        var endDiff1 = dateEnd1.getTime() - dateNow.getTime();//时间差的毫秒数
+        var endDayDiff1 = Math.floor(endDiff1 / (24 * 3600 * 1000));//计算出相差天数
+        //中期报告：计算补交结束时间，如果现在时间与补交结束时间的差>0，说明已经超过提交时间，无法提交报告
+        var endBan = dateNow.getTime()-dateBan.getTime();//时间差的毫秒数
+        var endDayBan = Math.floor(endBan / (24 * 3600 * 1000));//计算出相差天数
+
+        if(beginDayDiff<0){//没到开始时间
+            document.getElementById("middleBan").value="无法提交";
+            alert("当前时间是：" + dateNow + "，未到操作时间！");
+            return false;
+        }else {
+            if(nullFlag==1){
+                if(middleScore=="0"){//成绩为0，说明未提交中期报告，或者中期报告提交了但老师为打分，那么，就有机会重新提交报告
+                    if (endDayDiff1 < 0) {//已经超过正常提交时间
+                        if(endDayBan > 0){//已经超过补交截止时间
+                            if(startBJ=="1"){//补交开关打开，可以提交，默认为补交
+                                document.getElementById("middleBan").value = "补交";
+                                alert("已经超过提交时间，默认为补交！");
+                            }else {//补交开关关闭，不可以提交
+                                document.getElementById("middleBan").value = "无法提交";
+                                alert("已经超过提交时间，无法提交报告！");
+                            }
+                        }else {//没有超过补交截止时间，可以提交，默认为补交
+                            document.getElementById("middleBan").value="补交";
+                            alert("当前时间是：" + dateNow + "，已超出中期报告提交时间，本次报告为补交！若重复提交，会覆盖上次提交的报告！");
+                            // + dateNow.getHours () + ":" + dateNow.getMinutes () +
+                        }
+                    } else {//没有超过正常提交的截止时间，可以正常提交报告
+                        document.getElementById("middleBan").value="正常提交";
+                        alert("重复提交会覆盖上次提交的报告内容！当前时间是：" + dateNow + "，本次报告为正常提交！");
+                    }
+                    // return true;
+                }else{
+                    document.getElementById("middleBan").value="无法提交";
+                    alert("该报告已被批阅，无法重新提交！");
+                }
+            }else{
+                alert("报告内容与附件不能同时为空！");
+            }
+
+        }
+        // var gnl = confirm("确认要提交");
+        // if(gnl==true){
+        //     return true;
+        // }else{
+        //     return false;
+        // }
+    }
+    function middleReportContent(val1,val2) {
+        var d1 = val1.substring(1,val1.length-1);
+        var d2 = val2.substring(1,val2.length-1);
         layer.open({
             type: 1,
             area: ['600px', '550px'],
@@ -124,13 +231,13 @@
                 '<div class="row cl">'+
                 '<label class="form-label col-xs-4 col-sm-2">中期报告内容</label>'+
                 '<div class="formControls col-xs-8 col-sm-9">'+
-                '<textarea name="" cols="" rows="" class="textarea" datatype="*10-100" placeholder="" dragonfly="true" onKeyUp="$.Huitextarealength(this,500)" disabled>'+val1+'</textarea>'+
+                '<textarea name="" cols="" rows="" class="textarea" datatype="*10-100" placeholder="" dragonfly="true" onKeyUp="$.Huitextarealength(this,500)" disabled>'+d1+'</textarea>'+
                 '</div>'+
                 '</div>'+
                 '<div class="row cl">'+
                 '<label class="form-label col-xs-4 col-sm-2">中期报告周报评语：</label>'+
                 '<div class="formControls col-xs-8 col-sm-9">'+
-                '<textarea name="" cols="" rows="" class="textarea" datatype="*10-100" placeholder="" dragonfly="true" onKeyUp="$.Huitextarealength(this,500)" disabled>'+val2+'</textarea>'+
+                '<textarea name="" cols="" rows="" class="textarea" datatype="*10-100" placeholder="" dragonfly="true" onKeyUp="$.Huitextarealength(this,500)" disabled>'+d2+'</textarea>'+
                 '</div>'+
                 '</div>'+
                 '</form>'+

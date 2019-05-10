@@ -23,7 +23,12 @@ public class Teacher_CompanyServiceImpl implements Teacher_CompanyService {
     }
 
     @Override
-    public Teacher_Company updateTeaComPsd(Teacher_Company teacher_company) {
+    public String findTeaComPsdByTno(String tno) {
+        return teacher_companyMapper.findTeaComPsdByTno(tno);
+    }
+
+    @Override
+    public int updateTeaComPsd(Teacher_Company teacher_company) {
         return this.teacher_companyMapper.updateTeaComPsd(teacher_company);
     }
 }

@@ -21,6 +21,8 @@ public class MonthReport {
     private String isAfter;
     //月报评语
     private String monthReview;
+    //月报文件路径
+    private String monthReportFilePath;
 
     public int getId() {
         return id;
@@ -52,6 +54,14 @@ public class MonthReport {
 
     public String getMonthReview() {
         return monthReview;
+    }
+
+    public String getMonthReportFilePath() {
+        return monthReportFilePath;
+    }
+
+    public void setMonthReportFilePath(String monthReportFilePath) {
+        this.monthReportFilePath = monthReportFilePath;
     }
 
     public void setId(int id) {

@@ -47,7 +47,7 @@
             <td th:text="${notice.noticeTitle}"/>
             <td th:text="${notice.noticeTime}"></td>
             <td th:text="${notice.teaId}"/>
-            <td><a href="javascript:;" th:onclick="noticeContent('[[${notice.noticeContent}]]')">浏览</a></td>
+            <td><a href="javascript:;" th:onclick="noticeContent('[[${notice.teaId}]]','[[${notice.noticeContent}]]')">浏览</a></td>
 
         </tr>
         </tbody>
@@ -90,7 +90,14 @@
         layer_show(title,url,w,h);
     }
 
-    function noticeContent(val) {
+    function noticeContent(valRole,val) {
+        var role = valRole.substring(1,valRole.length-1);
+        var val1;
+        if(role=="系统管理员"){
+            val1 = val.substring(4,val.length-5);
+        }else{
+            val1 = val.substring(1,val.length-1);
+        }
 
         layer.open({
             type: 1,
@@ -106,7 +113,7 @@
                 '<label class="form-label col-xs-4 col-sm-2">公告内容：</label>'+
                 '</div><br>'+
                 '<div class="formControls">'+
-                '<textarea name="" cols=""  rows="" class="textarea" datatype="*10-100" placeholder="" dragonfly="true" onKeyUp="$.Huitextarealength(this,500)" disabled>'+val+'</textarea>'+
+                '<textarea name="" cols=""  rows="" class="textarea" datatype="*10-100" placeholder="" dragonfly="true" onKeyUp="$.Huitextarealength(this,500)" disabled>'+val1+'</textarea>'+
                 '</div>'+
                 '</form>'+
                 '</div>'

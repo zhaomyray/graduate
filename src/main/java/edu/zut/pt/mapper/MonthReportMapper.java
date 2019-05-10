@@ -18,7 +18,7 @@ public interface MonthReportMapper {
      * @param monthReport
      * @return
      */
-    @Insert("insert into tb_info_monthreport(monthSno,content_monthReport,monthMessage,time_submit,isAfter) value(#{monthSno},#{content_monthReport},#{monthMessage},#{time_submit},#{isAfter})")
+    @Insert("insert into tb_info_monthreport(monthSno,content_monthReport,score,monthMessage,time_submit,isAfter,monthReview,monthReportFilePath) value(#{monthSno},#{content_monthReport},#{score},#{monthMessage},#{time_submit},#{isAfter},#{monthReview},#{monthReportFilePath})")
     public int insertMonthReport(MonthReport monthReport);
 
 

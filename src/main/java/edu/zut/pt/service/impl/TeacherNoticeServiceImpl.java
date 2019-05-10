@@ -21,11 +21,11 @@ public class TeacherNoticeServiceImpl implements TeacherNoticeService {
 
     @Override
     public int insertTeacherNotice(TeacherNotice teacherNotice) {
-        return this.insertTeacherNotice(teacherNotice);
+        return this.teacherNoticeMapper.insertTeacherNotice(teacherNotice);
     }
 
     @Override
     public int deleteTeacherNotice(Integer id) {
-        return this.deleteTeacherNotice(id);
+        return this.teacherNoticeMapper.deleteTeacherNotice(id);
     }
 }

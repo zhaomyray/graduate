@@ -18,7 +18,12 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student updateStudentPsd(Student student) {
+    public String findStudentPsdBySno(String sno) {
+        return this.studentMapper.findStudentPsdBySno(sno);
+    }
+
+    @Override
+    public int updateStudentPsd(Student student) {
         return this.studentMapper.updateStudentPsd(student);
     }
 }

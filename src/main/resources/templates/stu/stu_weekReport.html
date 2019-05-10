@@ -26,7 +26,7 @@
 <body>
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 软工实训管理系统 <span class="c-gray en">&gt;</span> 实训报告 <span class="c-gray en">&gt;</span> 周报 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
-    <form class="form form-horizontal" id="form_stu_weekReport_submit" method="post"  th:action="@{/submitWeekReport}" onsubmit="submit_sure()">
+
         <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="r">共有数据：<strong>[[${session.weekNum}]]</strong> 条</span> </div>
     <table class="table table-border table-bordered table-bg">
         <thead>
@@ -37,7 +37,9 @@
             <!--<th width="25"><input type="checkbox" name="" value=""></th>-->
             <th width="40">周期</th>
             <th width="130">提交时间</th>
+            <th width="50">是否补交</th>
             <th width="90">成绩</th>
+            <th width="60">下载</th>
             <th width="100">操作</th>
         </tr>
         </thead>
@@ -46,7 +48,14 @@
         <tr class="text-c" th:each="weekReport,memberStat:${resultList}" th:inline="none">
             <td th:text="${weekReport.weekMessage}"/>
             <td th:text="${weekReport.time_submit}"></td>
+            <td th:text="${weekReport.isAfter}">
             <td th:text="${weekReport.score}"/>
+            <td>
+                <form th:action="@{/weekFileReportDownload}" method="post" class="form-horizontal" id="form_weekReport_submit" enctype="multipart/form-data">
+                    <input type="text" th:value="${weekReport.weekReportFilePath}" id="weekReportFilePath" name="weekReportFilePath" style="display: none">
+                    <input class="btn btn-primary radius" type="submit" th:onclick="downloadWeekFile_sure('[[${weekReport.weekReportFilePath}]]')" value="&nbsp;&nbsp;下载报告&nbsp;&nbsp;">
+                </form>
+            </td>
             <td>
                 <a href="javascript:void(0)" th:onclick="weekReportContent('[[${weekReport.content_weekReport}]]','[[${weekReport.weekReview}]]')">浏览</a>
             </td>
@@ -54,46 +63,38 @@
 
         </tbody>
     </table>
-
-    <!--<form class="form form-horizontal" id="form_stu_weekReport_submit">-->
+        <form class="form form-horizontal" id="form_stu_weekReport_submit" method="post"  th:action="@{/submitWeekReport}" onsubmit="submit_sure()" enctype="multipart/form-data">
         <div class="row cl">
-
             <br>
             <br>
             <label class="form-label col-xs-4 col-sm-2">第</label>
-            <select name="weekMessage">
+            <select name="weekMessage" id="weekMessageId" >
+                <option text="请选择" value="请选择">请选择</option>
                 <option th:each="item:${weekList}" th:text="${item.id}"
                         th:value="${item.weekMessage}"></option>
-                <!--<option value="1">1</option>-->
-                <!--<option value="2">2</option>-->
-                <!--<option value="3">3</option>-->
-                <!--<option value="4">4</option>-->
-                <!--<option value="5">5</option>-->
-                <!--<option value="6">6</option>-->
-                <!--<option value="7">7</option>-->
-                <!--<option value="8">8</option>-->
-                <!--<option value="9">9</option>-->
-                <!--<option value="10">10</option>-->
-                <!--<option value="11">11</option>-->
-                <!--<option value="12">12</option>-->
             </select>
             <label>周周报&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
 
-
-            <input type="checkbox" name="isAfter" value="补交" >
-            <label>补交</label>
-
+            <input type="text" name="weekBan" id="weekBan" value="" style="display: none">
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2">本周周报内容：</label>
             <div class="formControls col-xs-8 col-sm-9">
-                <textarea name="weekReportContent" cols="" rows="" class="textarea"  placeholder="本周都干了什么呢？内容限制600字......" datatype="*10-100" dragonfly="true" nullmsg="备注不能为空！" onKeyUp="$.Huitextarealength(this,600)"></textarea>
-                <p class="textarea-numberbar"><em class="textarea-length">0</em>/600</p>
+                <textarea name="weekReportContent" id="weekReportContent" cols="" rows="" class="textarea"  placeholder="本周都干了什么呢？内容限制600字......" datatype="*10-100" dragonfly="true" nullmsg="备注不能为空！" onKeyUp="$.Huitextarealength(this,600)"></textarea>
+                <p class="textarea-numberbar"><em class="textarea-length" id="textNum">0</em>/600</p>
             </div>
         </div>
         <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">周报附件：</label>
+            <div class="formControls col-xs-8 col-sm-9"> <span class="btn-upload form-group">
+				<input class="input-text upload-url" type="text" name="addWeekFile" id="addWeekFile" readonly nullmsg="请添加附件！" style="width:200px">
+				<a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 浏览文件</a>
+				<input type="file" multiple name="uploadWeekFile" class="input-file">
+				</span> </div>
+        </div>
+        <div class="row cl">
             <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                <input class="btn btn-primary radius" id="submit" type="submit" th:onclick="submit_sure('[[${session.firstWeekBeginTime}]]','[[${session.firstWeekEndTime}]]','[[${session.WeekEndTime2}]]','[[${session.WeekEndTime3}]]','[[${session.WeekEndTime4}]]','[[${session.WeekEndTime5}]]','[[${session.WeekEndTime6}]]','[[${session.WeekEndTime7}]]','[[${session.WeekEndTime8}]]','[[${session.WeekEndTime9}]]','[[${session.WeekEndTime10}]]','[[${session.WeekEndTime11}]]','[[${session.WeekEndTime12}]]','[[${session.WeekEndTime13}]]','[[${session.startBJ}]]')" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
             </div>
         </div>
     </form>
@@ -118,22 +119,437 @@
         h		弹出层高度（缺省调默认值）
     */
 
+    //文本框内的字数动态显示
+    $('#weekReportContent').on("keyup",function(){
+        $('#textNum').text($('#weekReportContent').val().length);//键盘按下时，实时的显示数字
+        if($('#weekReportContent').val().length>600){
+            $('#textNum').text(600);
+            $('#weekReportContent').val($('#weekReportContent').val().substring(0,600));//长度大于600，截取前600个字符
+        }
+    })
+
 
     /*管理员-编辑*/
     function admin_edit(title,url,id,w,h){
         layer_show(title,url,w,h);
     }
 
-    function submit_sure(){
-        var gnl = confirm("确认要提交");
-        if(gnl==true){
-            return true;
-        }else{
-            return false;
+    function downloadWeekFile_sure(valPath){
+        var weekFile = valPath.substring(1,valPath.length-1);
+        if(weekFile=="未提交文件"){
+            alert("未提交文件，下载失败！");
         }
     }
-    function weekReportContent(val1,val2) {
 
+    function change(size){
+        var weekListSize = size;
+        var weekReportContent = document.getElementById("weekReportContent");
+        var submit = document.getElementById("submit");
+        if(weekListSize==0){
+            weekReportContent.readonly=true;
+            submit.readonly=false;
+        }
+    }
+
+
+    function submit_sure(val1,val2,valEnd2,valEnd3,valEnd4,valEnd5,valEnd6,valEnd7,valEnd8,valEnd9,valEnd10,valEnd11,valEnd12,valEnd13,valStartBJ){
+
+        var report = document.getElementById("weekReportContent").value;
+        var filePath = document.getElementById("addWeekFile").value;
+        var nullFlag;
+        if(report.length==0){
+            if(filePath.length==0){
+                nullFlag = 0;
+            }else{
+                nullFlag = 1;
+            }
+        }else{
+            nullFlag = 1;
+        }
+
+        var d1 = val1.substring(1,val1.length-1);
+        var d2 = val2.substring(1,val2.length-1);
+        var dend2 = valEnd2.substring(1,valEnd2.length-1);
+        var dend3 = valEnd3.substring(1,valEnd3.length-1);
+        var dend4 = valEnd4.substring(1,valEnd4.length-1);
+        var dend5 = valEnd5.substring(1,valEnd5.length-1);
+        var dend6 = valEnd6.substring(1,valEnd6.length-1);
+        var dend7 = valEnd7.substring(1,valEnd7.length-1);
+        var dend8 = valEnd8.substring(1,valEnd8.length-1);
+        var dend9 = valEnd9.substring(1,valEnd9.length-1);
+        var dend10 = valEnd10.substring(1,valEnd10.length-1);
+        var dend11 = valEnd11.substring(1,valEnd11.length-1);
+        var dend12 = valEnd12.substring(1,valEnd12.length-1);
+        var dend13 = valEnd13.substring(1,valEnd13.length-1);
+        var startBJ = valStartBJ.substring(1,valStartBJ.length-1);
+
+        var weekMessage = document.getElementById("weekMessageId").value;
+        // alert("第一次报告开始提交时间："+d1+"超过"+d2+"即为补交");
+        var dateBegin = new Date(d1);//将-转化为/，使用new Date
+        var dateEnd1 = new Date(d2);//将-转化为/，使用new Date
+        var dateEnd2 = new Date(dend2);
+        var dateEnd3 = new Date(dend3);
+        var dateEnd4 = new Date(dend4);
+        var dateEnd5 = new Date(dend5);
+        var dateEnd6 = new Date(dend6);
+        var dateEnd7 = new Date(dend7);
+        var dateEnd8 = new Date(dend8);
+        var dateEnd9 = new Date(dend9);
+        var dateEnd10 = new Date(dend10);
+        var dateEnd11 = new Date(dend11);
+        var dateEnd12 = new Date(dend12);
+        var dateEnd13 = new Date(dend13);
+        var dateNow = new Date();//获取当前时间
+
+        //计算开始的时间，如果现在的时间与开始时间的差<0,说明还没到开始时间，不能操作
+        var beginDiff = dateNow.getTime() - dateBegin.getTime();//时间差的毫秒数
+        var beginDayDiff = Math.floor(beginDiff / (24 * 3600 * 1000));//计算出相差天数
+
+        //第1次周报：计算结束时间，如果第1次周报的结束时间与现在时间的差小于0，说明已经超过结束时间，提交的报告默认为补交
+        var endDiff1 = dateEnd1.getTime() - dateNow.getTime();//时间差的毫秒数
+        var endDayDiff1 = Math.floor(endDiff1 / (24 * 3600 * 1000));//计算出相差天数
+        //第2次周报：计算补交时间，如果第1次周报的提交时间与第2周周报的结束时间的差>0，说明已经超过补交时间，无法提交报告
+        var endBan1 = dateNow.getTime()-dateEnd2.getTime();//时间差的毫秒数
+        var endDayBan1 = Math.floor(endBan1 / (24 * 3600 * 1000));//计算出相差天数
+
+        //第2次周报：计算结束时间：如果第2次周报的结束时间与现在时间的差小于0，说明已经超过结束时间，提交报告默认为补交
+        var endDiff2 = dateEnd2.getTime() - dateNow.getTime();//时间差的毫秒数
+        var endDayDiff2 = Math.floor(endDiff2 / (24 * 3600 * 1000));//计算出相差天数
+        //第2次周报：计算补交时间，如果第2次周报的提交时间与第3周周报的结束时间的差>0，说明已经超过补交时间，无法提交报告
+        var endBan2 = dateNow.getTime()-dateEnd3.getTime();
+        var endDayBan2 = Math.floor(endBan2 / (24 * 3600 * 1000));
+
+        //第3次周报：计算结束时间：如果第3次周报的截止时间与现在时间的差小于0，说明已经超过结束时间，提交报告默认为补交
+        var endDiff3 = dateEnd3.getTime() - dateNow.getTime();//时间差的毫秒数
+        var endDayDiff3 = Math.floor(endDiff3 / (24 * 3600 * 1000));//计算出相差天数
+        //第3次周报：计算补交时间，如果第3次周报的提交时间与第4周周报的结束时间的差>0，说明已经超过补交时间，无法提交报告
+        var endBan3 = dateNow.getTime()-dateEnd4.getTime();
+        var endDayBan3 = Math.floor(endBan3 / (24 * 3600 * 1000));
+
+        //第4次周报：计算结束时间：如果第4次周报的结束时间与现在时间的差小于0，说明已经超过结束时间，提交报告默认为补交
+        var endDiff4 = dateEnd4.getTime() - dateNow.getTime();//时间差的毫秒数
+        var endDayDiff4 = Math.floor(endDiff4 / (24 * 3600 * 1000));//计算出相差天数
+        //第4次周报：计算补交时间，如果第4次周报的提交时间与第5周周报的结束时间的差>0，说明已经超过补交时间，无法提交报告
+        var endBan4 = dateNow.getTime()-dateEnd5.getTime();
+        var endDayBan4 = Math.floor(endBan4 / (24 * 3600 * 1000));
+
+        //第5次周报：计算结束时间：如果第5次周报的结束时间与现在时间的差小于0，说明已经超过结束时间，提交报告默认为补交
+        var endDiff5 = dateEnd5.getTime() - dateNow.getTime();//时间差的毫秒数
+        var endDayDiff5 = Math.floor(endDiff5 / (24 * 3600 * 1000));//计算出相差天数
+        //第5次周报：计算补交时间，如果第5次周报的提交时间与第6周周报的结束时间的差>0，说明已经超过补交时间，无法提交报告
+        var endBan5 = dateNow.getTime()-dateEnd6.getTime();
+        var endDayBan5 = Math.floor(endBan5 / (24 * 3600 * 1000));
+
+        //第6次周报：计算结束时间：如果第6次周报的结束时间与现在时间的差小于0，说明已经超过结束时间，提交报告默认为补交
+        var endDiff6 = dateEnd6.getTime() - dateNow.getTime();//时间差的毫秒数
+        var endDayDiff6 = Math.floor(endDiff6 / (24 * 3600 * 1000));//计算出相差天数
+        //第6次周报：计算补交时间，如果第6次周报的提交时间与第7周周报的结束时间的差>0，说明已经超过补交时间，无法提交报告
+        var endBan6 = dateNow.getTime()-dateEnd7.getTime();
+        var endDayBan6 = Math.floor(endBan6 / (24 * 3600 * 1000));
+
+        //第7次周报：计算结束时间：如果第7次周报的结束时间与现在时间的差小于0，说明已经超过结束时间，提交报告默认为补交
+        var endDiff7 = dateEnd7.getTime() - dateNow.getTime();//时间差的毫秒数
+        var endDayDiff7 = Math.floor(endDiff7 / (24 * 3600 * 1000));//计算出相差天数
+        //第7次周报：计算补交时间，如果第7次周报的提交时间与第8周周报的结束时间的差>0，说明已经超过补交时间，无法提交报告
+        var endBan7 = dateNow.getTime()-dateEnd8.getTime();
+        var endDayBan7 = Math.floor(endBan7 / (24 * 3600 * 1000));
+
+        //第8次周报：计算结束时间：如果第8次周报的结束时间与现在时间的差小于0，说明已经超过结束时间，提交报告默认为补交
+        var endDiff8 = dateEnd8.getTime() - dateNow.getTime();//时间差的毫秒数
+        var endDayDiff8 = Math.floor(endDiff8 / (24 * 3600 * 1000));//计算出相差天数
+        //第8次周报：计算补交时间，如果第8次周报的提交时间与第9周周报的结束时间的差>0，说明已经超过补交时间，无法提交报告
+        var endBan8 = dateNow.getTime()-dateEnd9.getTime();
+        var endDayBan8 = Math.floor(endBan8 / (24 * 3600 * 1000));
+
+        //第9次周报：计算结束时间：如果第9次周报的结束时间与现在时间的差小于0，说明已经超过结束时间，提交报告默认为补交
+        var endDiff9 = dateEnd9.getTime() - dateNow.getTime();//时间差的毫秒数
+        var endDayDiff9 = Math.floor(endDiff9 / (24 * 3600 * 1000));//计算出相差天数
+        //第9次周报：计算补交时间，如果第9次周报的提交时间与第10周周报的结束时间的差>0，说明已经超过补交时间，无法提交报告
+        var endBan9 = dateNow.getTime()-dateEnd10.getTime();
+        var endDayBan9 = Math.floor(endBan9 / (24 * 3600 * 1000));
+
+        //第10次周报：计算结束时间：如果第10次周报的结束时间与现在时间的差小于0，说明已经超过结束时间，提交报告默认为补交
+        var endDiff10 = dateEnd10.getTime() - dateNow.getTime();//时间差的毫秒数
+        var endDayDiff10 = Math.floor(endDiff10 / (24 * 3600 * 1000));//计算出相差天数
+        //第10次周报：计算补交时间，如果第10次周报的提交时间与第11周周报的结束时间的差>0，说明已经超过补交时间，无法提交报告
+        var endBan10 = dateNow.getTime()-dateEnd11.getTime();
+        var endDayBan10 = Math.floor(endBan10 / (24 * 3600 * 1000));
+
+        //第11次周报：计算结束时间：如果第11次周报的结束时间与现在时间的差小于0，说明已经超过结束时间，提交报告默认为补交
+        var endDiff11 = dateEnd11.getTime() - dateNow.getTime();//时间差的毫秒数
+        var endDayDiff11 = Math.floor(endDiff11 / (24 * 3600 * 1000));//计算出相差天数
+        //第11次周报：计算补交时间，如果第11次周报的提交时间与第12周周报的结束时间的差>0，说明已经超过补交时间，无法提交报告
+        var endBan11 = dateNow.getTime()-dateEnd12.getTime();
+        var endDayBan11 = Math.floor(endBan11 / (24 * 3600 * 1000));
+
+        //第12次周报：计算结束时间：如果第12次周报的结束时间与现在时间的差小于0，说明已经超过结束时间，提交报告默认为补交
+        var endDiff12 = dateEnd12.getTime() - dateNow.getTime();//时间差的毫秒数
+        var endDayDiff12 = Math.floor(endDiff12 / (24 * 3600 * 1000));//计算出相差天数
+        //第12次周报：计算补交时间，如果第12次周报的提交时间与第13周周报的结束时间的差>0，说明已经超过补交时间，无法提交报告
+        var endBan12 = dateNow.getTime()-dateEnd13.getTime();
+        var endDayBan12 = Math.floor(endBan12 / (24 * 3600 * 1000));
+
+        if (beginDayDiff < 0) {//没到开始时间
+                document.getElementById("weekBan").value = "未到时间";
+                alert("当前时间是：" + dateNow + "，未到操作时间！");
+                return false;
+        } else {
+            if (weekMessage == "请选择") {
+                alert("请选择正确的周期！")
+                return false;
+            } else if (nullFlag == 1) {
+                if (weekMessage == "1") {
+                    if (endDayDiff1 < 0) {//已经超过正常提交时间
+                        if (endDayBan1 > 0) {//已经超过补交时间
+                            if (startBJ == "1") {//实训结束前，补交开关打开，可以提交，默认为补交
+                                document.getElementById("weekBan").value = "补交";
+                                alert("当前时间是：" + dateNow + "，已超出正常提交时间，默认为补交！");
+                            } else {//实训结束前，补交开关未打开，不可以提交
+                                document.getElementById("weekBan").value = "无法提交";
+                                alert("该周周报已经超过提交时间，无法提交！");
+                            }
+                        } else {//未超过补交时间，默认为补交
+                            document.getElementById("weekBan").value = "补交";
+                            alert("当前时间是：" + dateNow + "，已超出提交时间，本次报告为补交！");
+                            // + dateNow.getHours () + ":" + dateNow.getMinutes () +
+                        }
+                    } else {//在正常提交时间范围内
+                        document.getElementById("weekBan").value = "正常提交";
+                        alert("当前时间是：" + dateNow + "，本次报告为正常提交！");
+                    }
+                } else if (weekMessage == "2") {
+                    if (endDayDiff2 < 0) {//已经超过正常提交时间
+                        if (endDayBan2 > 0) {//已经超过补交时间
+                            if (startBJ == "1") {//实训结束前，补交开关打开，可以提交，默认为补交
+                                document.getElementById("weekBan").value = "补交";
+                                alert("当前时间是：" + dateNow + "，已超出正常提交时间，默认为补交！");
+                            } else {//实训结束前，补交开关未打开，不可以提交
+                                document.getElementById("weekBan").value = "无法提交";
+                                alert("该周周报已经超过提交时间，无法提交！");
+                            }
+                        } else {//未超过补交时间，默认为补交
+                            document.getElementById("weekBan").value = "补交";
+                            alert("当前时间是：" + dateNow + "，已超出提交时间，本次报告为补交！");
+                            // + dateNow.getHours () + ":" + dateNow.getMinutes () +
+                        }
+                    } else {
+                        document.getElementById("weekBan").value = "正常提交";
+                        alert("当前时间是：" + dateNow + "，本次报告为正常提交！");
+                    }
+                } else if (weekMessage == "3") {
+                    if (endDayDiff3 < 0) {//已经超过正常提交时间
+                        if (endDayBan3 > 0) {//已经超过补交时间
+                            if (startBJ == "1") {//实训结束前，补交开关打开，可以提交，默认为补交
+                                document.getElementById("weekBan").value = "补交";
+                                alert("当前时间是：" + dateNow + "，已超出正常提交时间，默认为补交！");
+                            } else {//实训结束前，补交开关未打开，不可以提交
+                                document.getElementById("weekBan").value = "无法提交";
+                                alert("该周周报已经超过提交时间，无法提交！");
+                            }
+                        } else {//未超过补交时间，默认为补交
+                            document.getElementById("weekBan").value = "补交";
+                            alert("当前时间是：" + dateNow + "，已超出提交时间，本次报告为补交！");
+                            // + dateNow.getHours () + ":" + dateNow.getMinutes () +
+                        }
+                    } else {
+                        document.getElementById("weekBan").value = "正常提交";
+                        alert("当前时间是：" + dateNow + "，本次报告为正常提交！");
+                    }
+                } else if (weekMessage == "4") {
+                    if (endDayDiff4 < 0) {//已经超过正常提交时间
+                        if (endDayBan4 > 0) {//已经超过补交时间
+                            if (startBJ == "1") {//实训结束前，补交开关打开，可以提交，默认为补交
+                                document.getElementById("weekBan").value = "补交";
+                                alert("当前时间是：" + dateNow + "，已超出正常提交时间，默认为补交！");
+                            } else {//实训结束前，补交开关未打开，不可以提交
+                                document.getElementById("weekBan").value = "无法提交";
+                                alert("该周周报已经超过提交时间，无法提交！");
+                            }
+                        } else {//未超过补交时间，默认为补交
+                            document.getElementById("weekBan").value = "补交";
+                            alert("当前时间是：" + dateNow + "，已超出提交时间，本次报告为补交！");
+                            // + dateNow.getHours () + ":" + dateNow.getMinutes () +
+                        }
+                    } else {
+                        document.getElementById("weekBan").value = "正常提交";
+                        alert("当前时间是：" + dateNow + "，本次报告为正常提交！");
+                    }
+                } else if (weekMessage == "5") {
+                    if (endDayDiff5 < 0) {//已经超过正常提交时间
+                        if (endDayBan5 > 0) {//已经超过补交时间
+                            if (startBJ == "1") {//实训结束前，补交开关打开，可以提交，默认为补交
+                                document.getElementById("weekBan").value = "补交";
+                                alert("当前时间是：" + dateNow + "，已超出正常提交时间，默认为补交！");
+                            } else {//实训结束前，补交开关未打开，不可以提交
+                                document.getElementById("weekBan").value = "无法提交";
+                                alert("该周周报已经超过提交时间，无法提交！");
+                            }
+                        } else {//未超过补交时间，默认为补交
+                            document.getElementById("weekBan").value = "补交";
+                            alert("当前时间是：" + dateNow + "，已超出提交时间，本次报告为补交！");
+                            // + dateNow.getHours () + ":" + dateNow.getMinutes () +
+                        }
+                    } else {
+                        document.getElementById("weekBan").value = "正常提交";
+                        alert("当前时间是：" + dateNow + "，本次报告为正常提交！");
+                    }
+                } else if (weekMessage == "6") {
+                    if (endDayDiff6 < 0) {//已经超过正常提交时间
+                        if (endDayBan6 > 0) {//已经超过补交时间
+                            if (startBJ == "1") {//实训结束前，补交开关打开，可以提交，默认为补交
+                                document.getElementById("weekBan").value = "补交";
+                                alert("当前时间是：" + dateNow + "，已超出正常提交时间，默认为补交！");
+                            } else {//实训结束前，补交开关未打开，不可以提交
+                                document.getElementById("weekBan").value = "无法提交";
+                                alert("该周周报已经超过提交时间，无法提交！");
+                            }
+                        } else {//未超过补交时间，默认为补交
+                            document.getElementById("weekBan").value = "补交";
+                            alert("当前时间是：" + dateNow + "，已超出提交时间，本次报告为补交！");
+                            // + dateNow.getHours () + ":" + dateNow.getMinutes () +
+                            return true;
+                        }
+                    } else {
+                        document.getElementById("weekBan").value = "正常提交";
+                        alert("当前时间是：" + dateNow + "，本次报告为正常提交！");
+                    }
+                } else if (weekMessage == "7") {
+                    if (endDayDiff7 < 0) {//已过期
+                        if (endDayBan7 > 0) {//已经超过补交时间
+                            if (startBJ == "1") {//实训结束前，补交开关打开，可以提交，默认为补交
+                                document.getElementById("weekBan").value = "补交";
+                                alert("当前时间是：" + dateNow + "，已超出正常提交时间，默认为补交！");
+                            } else {//实训结束前，补交开关未打开，不可以提交
+                                document.getElementById("weekBan").value = "无法提交";
+                                alert("该周周报已经超过提交时间，无法提交！");
+                            }
+                        } else {//未超过补交时间，默认为补交
+                            document.getElementById("weekBan").value = "补交";
+                            alert("当前时间是：" + dateNow + "，已超出提交时间，本次报告为补交！");
+                            // + dateNow.getHours () + ":" + dateNow.getMinutes () +
+                            return true;
+                        }
+                    } else {
+                        document.getElementById("weekBan").value = "正常提交";
+                        alert("当前时间是：" + dateNow + "，本次报告为正常提交！");
+                    }
+                } else if (weekMessage == "8") {
+                    if (endDayDiff8 < 0) {//已过期
+                        if (endDayBan8 > 0) {//已经超过补交时间
+                            if (startBJ == "1") {//实训结束前，补交开关打开，可以提交，默认为补交
+                                document.getElementById("weekBan").value = "补交";
+                                alert("当前时间是：" + dateNow + "，已超出正常提交时间，默认为补交！");
+                            } else {//实训结束前，补交开关未打开，不可以提交
+                                document.getElementById("weekBan").value = "无法提交";
+                                alert("该周周报已经超过提交时间，无法提交！");
+                            }
+                        } else {//未超过补交时间，默认为补交
+                            document.getElementById("weekBan").value = "补交";
+                            alert("当前时间是：" + dateNow + "，已超出提交时间，本次报告为补交！");
+                            // + dateNow.getHours () + ":" + dateNow.getMinutes () +
+                            return true;
+                        }
+                    } else {
+                        document.getElementById("weekBan").value = "正常提交";
+                        alert("当前时间是：" + dateNow + "，本次报告为正常提交！");
+                    }
+                } else if (weekMessage == "9") {
+                    if (endDayDiff9 < 0) {//已过期
+                        if (endDayBan9 > 0) {//已经超过补交时间
+                            if (startBJ == "1") {//实训结束前，补交开关打开，可以提交，默认为补交
+                                document.getElementById("weekBan").value = "补交";
+                                alert("当前时间是：" + dateNow + "，已超出正常提交时间，默认为补交！");
+                            } else {//实训结束前，补交开关未打开，不可以提交
+                                document.getElementById("weekBan").value = "无法提交";
+                                alert("该周周报已经超过提交时间，无法提交！");
+                            }
+                        } else {//未超过补交时间，默认为补交
+                            document.getElementById("weekBan").value = "补交";
+                            alert("当前时间是：" + dateNow + "，已超出提交时间，本次报告为补交！");
+                            // + dateNow.getHours () + ":" + dateNow.getMinutes () +
+                            return true;
+                        }
+                    } else {
+                        document.getElementById("weekBan").value = "正常提交";
+                        alert("当前时间是：" + dateNow + "，本次报告为正常提交！");
+                    }
+                } else if (weekMessage == "10") {
+                    if (endDayDiff10 < 0) {//已过期
+                        if (endDayBan10 > 0) {//已经超过补交时间
+                            if (startBJ == "1") {//实训结束前，补交开关打开，可以提交，默认为补交
+                                document.getElementById("weekBan").value = "补交";
+                                alert("当前时间是：" + dateNow + "，已超出正常提交时间，默认为补交！");
+                            } else {//实训结束前，补交开关未打开，不可以提交
+                                document.getElementById("weekBan").value = "无法提交";
+                                alert("该周周报已经超过提交时间，无法提交！");
+                            }
+                        } else {//未超过补交时间，默认为补交
+                            document.getElementById("weekBan").value = "补交";
+                            alert("当前时间是：" + dateNow + "，已超出提交时间，本次报告为补交！");
+                            // + dateNow.getHours () + ":" + dateNow.getMinutes () +
+                            return true;
+                        }
+                    } else {
+                        document.getElementById("weekBan").value = "正常提交";
+                        alert("当前时间是：" + dateNow + "，本次报告为正常提交！");
+                    }
+                } else if (weekMessage == "11") {
+                    if (endDayDiff11 < 0) {//已过期
+                        if (endDayBan11 > 0) {//已经超过补交时间
+                            if (startBJ == "1") {//实训结束前，补交开关打开，可以提交，默认为补交
+                                document.getElementById("weekBan").value = "补交";
+                                alert("当前时间是：" + dateNow + "，已超出正常提交时间，默认为补交！");
+                            } else {//实训结束前，补交开关未打开，不可以提交
+                                document.getElementById("weekBan").value = "无法提交";
+                                alert("该周周报已经超过提交时间，无法提交！");
+                            }
+                        } else {//未超过补交时间，默认为补交
+                            document.getElementById("weekBan").value = "补交";
+                            alert("当前时间是：" + dateNow + "，已超出提交时间，本次报告为补交！");
+                            // + dateNow.getHours () + ":" + dateNow.getMinutes () +
+                            return true;
+                        }
+                    } else {
+                        document.getElementById("weekBan").value = "正常提交";
+                        alert("当前时间是：" + dateNow + "，本次报告为正常提交！");
+                    }
+                } else if (weekMessage == "12") {
+                    if (endDayDiff12 < 0) {//已过期
+                        if (endDayBan12 > 0) {//已经超过补交时间
+                            if (startBJ == "1") {//实训结束前，补交开关打开，可以提交，默认为补交
+                                document.getElementById("weekBan").value = "补交";
+                                alert("当前时间是：" + dateNow + "，已超出正常提交时间，默认为补交！");
+                            } else {//实训结束前，补交开关未打开，不可以提交
+                                document.getElementById("weekBan").value = "无法提交";
+                                alert("该周周报已经超过提交时间，无法提交！");
+                            }
+                        } else {//未超过补交时间，默认为补交
+                            document.getElementById("weekBan").value = "补交";
+                            alert("当前时间是：" + dateNow + "，已超出提交时间，本次报告为补交！");
+                            // + dateNow.getHours () + ":" + dateNow.getMinutes () +
+                            return true;
+                        }
+                    } else {
+                        document.getElementById("weekBan").value = "正常提交";
+                        alert("当前时间是：" + dateNow + "，本次报告为正常提交！");
+                    }
+                }
+            }else{
+                alert("周报内容与附件不能同时为空！");
+            }
+        }
+
+
+        // var gnl = confirm("确认要提交");
+        // if(gnl==true){
+        //     return true;
+        // }else{
+        //     return false;
+        // }
+    }
+    function weekReportContent(val1,val2) {
+        var d1 = val1.substring(1,val1.length-1);
+        var d2 = val2.substring(1,val2.length-1);
         layer.open({
             type: 1,
             area: ['600px', '550px'],
@@ -147,13 +563,13 @@
                 '<div class="row cl">'+
                 '<label class="form-label col-xs-4 col-sm-2">周报内容</label>'+
                 '<div class="formControls col-xs-8 col-sm-9">'+
-                '<textarea name="" cols=""  rows="" class="textarea" datatype="*10-100" placeholder="" dragonfly="true" onKeyUp="$.Huitextarealength(this,500)" disabled>'+val1+'</textarea>'+
+                '<textarea name="" cols=""  rows="" class="textarea" datatype="*10-100" placeholder="" dragonfly="true" onKeyUp="$.Huitextarealength(this,500)" disabled>'+d1+'</textarea>'+
                 '</div>'+
                 '</div>'+
                 '<div class="row cl">'+
                 '<label class="form-label col-xs-4 col-sm-2">周报评语：</label>'+
                 '<div class="formControls col-xs-8 col-sm-9">'+
-                '<textarea name="" cols="" rows="" class="textarea" datatype="*10-100" placeholder="" dragonfly="true" onKeyUp="$.Huitextarealength(this,500)" disabled>'+val2+'</textarea>'+
+                '<textarea name="" cols="" rows="" class="textarea" datatype="*10-100" placeholder="" dragonfly="true" onKeyUp="$.Huitextarealength(this,500)" disabled>'+d2+'</textarea>'+
                 '</div>'+
                 '</div>'+
                 '</form>'+

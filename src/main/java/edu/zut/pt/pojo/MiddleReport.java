@@ -19,6 +19,10 @@ public class MiddleReport {
     private String isAfter;
     //评语
     private String middleReview;
+    //中期报告路径
+    private String middleReportFilePath;
+    //中期报告更新情况
+    private String isUpdate;
 
     public int getId() {
         return id;
@@ -48,6 +52,16 @@ public class MiddleReport {
         return middleReview;
     }
 
+    public String getMiddleReportFilePath() {
+        return middleReportFilePath;
+    }
+
+
+
+    public void setMiddleReportFilePath(String middleReportFilePath) {
+        this.middleReportFilePath = middleReportFilePath;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -74,5 +88,13 @@ public class MiddleReport {
 
     public void setMiddleReview(String middleReview) {
         this.middleReview = middleReview;
+    }
+
+    public String getIsUpdate() {
+        return isUpdate;
+    }
+
+    public void setIsUpdate(String isUpdate) {
+        this.isUpdate = isUpdate;
     }
 }

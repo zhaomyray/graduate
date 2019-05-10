@@ -57,18 +57,21 @@
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>我的联系方式：</label>
             <div class="formControls col-xs-8 col-sm-9">
                 <input type="text" class="input-text" th:value="${session.myPhone}" placeholder="" id="phone1" name="myPhone" disabled>
+                <p class="textarea-numberbar"><em class="textarea-length" id="myPhoneMessage" style="color: red"></em></p>
             </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>我的邮箱：</label>
             <div class="formControls col-xs-8 col-sm-9">
                 <input type="text" class="input-text" th:value="${session.myEmail}" placeholder="" id="email" name="myEmail" disabled>
+                <p class="textarea-numberbar"><em class="textarea-length" id="myEmailMessage" style="color: red"></em></p>
             </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>父母联系方式：</label>
             <div class="formControls col-xs-8 col-sm-9">
                 <input type="text" class="input-text" th:value="${session.myParentPhone}" placeholder="任写其一" id="phone2" name="myParentPhone" disabled>
+                <p class="textarea-numberbar"><em class="textarea-length" id="myParentPhoneMessage" style="color: red"></em></p>
             </div>
         </div>
         <div class="row cl">
@@ -86,38 +89,44 @@
             <label class="form-label col-xs-4 col-sm-2">实训公司：</label>
             <div class="formControls col-xs-8 col-sm-9">
                 <input type="text" class="input-text" th:value="${session.ptCompany}" placeholder="" id="ptCompany" name="ptCompany" disabled>
+                <p class="textarea-numberbar"><em class="textarea-length" id="myPTCompanyName" style="color: red"></em></p>
             </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2">校外指导老师：</label>
             <div class="formControls col-xs-8 col-sm-9">
                 <input type="text" class="input-text" th:value="${session.comTeacherName}" placeholder="姓名" id="comTeacherName" name="comTeacherName" disabled>
+                <p class="textarea-numberbar"><em class="textarea-length" id="myPTComTeaName" style="color: red"></em></p>
             </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"></label>
             <div class="formControls col-xs-8 col-sm-9">
                 <input type="text" class="input-text" th:value="${session.comTeacherPhone}" placeholder="联系方式" id="phone3" name="comTeacherPhone" disabled>
+                <p class="textarea-numberbar"><em class="textarea-length" id="myComTeaPhoneMessage" style="color: red"></em></p>
             </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2">实训题目：</label>
             <div class="formControls col-xs-8 col-sm-9">
                 <input type="text" class="input-text" th:value="${session.ptTitle}" placeholder="" id="ptTitle" name="ptTitle" disabled>
+                <p class="textarea-numberbar"><em class="textarea-length" id="myPTName" style="color: red"></em></p>
             </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2">实训所在城市：</label>
             <div class="formControls col-xs-8 col-sm-9">
-                <input type="text" class="input-text" th:value="${session.ptCity}" placeholder="" id="city" name="ptCity" disabled>
+                <input type="text" class="input-text" th:value="${session.ptCity}" placeholder="" id="ptCity" name="ptCity" disabled>
+                <p class="textarea-numberbar"><em class="textarea-length" id="myPTCity" style="color: red"></em></p>
             </div>
+        </div>
+        <div>
+            <input type="text" name="updatePTInfoBan" id="updatePTInfoBan" value="" style="display: none">
         </div>
         <div class="row cl">
             <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
-                <button onClick="submit_sure()" class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 提交信息</button>
-                <button onClick="updateInfo();" class="btn btn-secondary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 修改信息</button>
-                <!--<button onClick="" class="btn btn-default radius" type="reset">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>-->
-                <!--removeIframe();-->
+                <button th:onClick="submit_sure('[[${session.messageBeginTime}]]','[[${session.messageEndTime}]]')" class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 提交信息</button>
+                <button th:onClick="updateInfo('[[${session.messageBeginTime}]]','[[${session.messageEndTime}]]');" class="btn btn-secondary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 修改信息</button>
             </div>
         </div>
     </form>
@@ -139,12 +148,103 @@
 <script type="text/javascript" src="lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
 <script type="text/javascript" src="lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
 <script type="text/javascript">
-    function updateInfo(){
+
+    //验证我的联系方式
+    $('#phone1').bind('input onchange',function () {//给输入联系方式的文本框绑定input事件
+
+        var phone = $('#phone1').val();
+        if(!(/^1[34578]\d{9}$/.test(phone))){
+            $('#myPhoneMessage').text("号码格式有误");
+        }else{
+            $('#myPhoneMessage').text("");
+        }
+    })
+
+    //验证我的邮箱
+    $('#email').bind('input onchange',function(){//给输入邮箱的文本框绑定input事件
+
+        var email = $('#email').val();
+        if(!(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(email))){
+            $('#myEmailMessage').text("邮箱格式有误");
+        }else{
+            $('#myEmailMessage').text("");
+        }
+    })
+
+    //验证父母联系方式
+    $('#phone2').bind('input onchange',function () {//给输入父母联系方式的文本框绑定input事件
+
+        var phone = $('#phone2').val();
+        if(!(/^1[34578]\d{9}$/.test(phone))){
+            $('#myParentPhoneMessage').text("号码格式有误");
+        }else{
+            $('#myParentPhoneMessage').text("");
+        }
+    })
+
+    //验证实训公司名称
+    $('#ptCompany').bind('input onchange',function () {//给输入公司名称的文本框绑定input事件
+
+        var name = $('#ptCompany').val();
+        if(name.length==0){
+            $('#myPTCompanyName').text("公司名称不能为空");
+        }else{
+            $('#myPTCompanyName').text("");
+        }
+    })
+
+    //验证校外指导老师姓名
+    $('#comTeacherName').bind('input onchange',function () {//给输入校外指导老师姓名的文本框绑定input事件
+
+        var name = $('#comTeacherName').val();
+        if(name.length==0){
+            $('#myPTComTeaName').text("指导老师姓名不能为空");
+        }else{
+            $('#myPTComTeaName').text("");
+        }
+    })
+
+    //验证校外指导老师联系方式
+    $('#phone3').bind('input onchange',function () {//给输入校外指导老师联系方式的文本框绑定input事件
+
+        var phone = $('#phone3').val();
+        if(!(/^1[34578]\d{9}$/.test(phone))){
+            $('#myComTeaPhoneMessage').text("联系方式格式有误");
+        }else{
+            $('#myComTeaPhoneMessage').text("");
+        }
+    })
+
+    //验证实训题目
+    $('#ptTitle').bind('input onchange',function () {//给输入实训题目的文本框绑定input事件
+
+        var name = $('#ptTitle').val();
+        if(name.length==0){
+            $('#myPTName').text("实训题目不能为空");
+        }else{
+            $('#myPTName').text("");
+        }
+    })
+
+    //验证实训城市
+    $('#ptCity').bind('input onchange',function () {//给输入实训题目的文本框绑定input事件
+
+        var name = $('#ptCity').val();
+        if(name.length==0){
+            $('#myPTCity').text("实训城市不能为空");
+        }else{
+            $('#myPTCity').text("");
+        }
+    })
+
+    function updateInfo(val1,val2){
         //如果时间格式是正确的，那下面这一步转化时间格式就可以不用了
         // var dateBegin = new Date(d1.replace(/-/g, "/"));//将-转化为/，使用new Date
         // var dateEnd = new Date(d2.replace(/-/g, "/"));//将-转化为/，使用new Date
-        var d1="2019-04-15 20:42:00";
-        var d2="2019-04-15 20:50:00"
+        // var d11="2019-04-26 20:42:00";
+        // var d22="2019-04-26 20:50:00";
+        var d1 = val1.substring(1,val1.length-1);
+        var d2 = val2.substring(1,val2.length-1);
         var dateBegin = new Date(d1);//将-转化为/，使用new Date
         var dateEnd = new Date(d2);//将-转化为/，使用new Date
         var dateNow = new Date();//获取当前时间
@@ -154,13 +254,19 @@
 
         var endDiff = dateEnd.getTime() - dateNow.getTime();//时间差的毫秒数
         var endDayDiff = Math.floor(endDiff / (24 * 3600 * 1000));//计算出相差天数
-        if (endDayDiff < 0) {//已过期
-            alert ("当前时间是：" + dateNow.getHours () + ":" + dateNow.getMinutes () + "，不在该时间范围内！");
+        if (endDayDiff < 0) {//已经超过修改时间，不能做修改操作
+            document.getElementById("updatePTInfoBan").value="不能修改";
+            alert ("当前时间是：" + dateNow +"，已超出操作时间！");
+            // + dateNow.getHours () + ":" + dateNow.getMinutes () +
             return false;
-        }else if (beginDayDiff < 0) {//没到开始时间
-            alert ("当前时间是：" + dateNow.getHours () + ":" + dateNow.getMinutes () + "，不在该时间范围内！");
+        }else if (beginDayDiff < 0) {//未到修改时间，不能做修改操作
+            document.getElementById("updatePTInfoBan").value="不能修改";
+            alert ("当前时间是：" + dateNow + "，未到操作时间！");
             return false;
         }else {
+
+            document.getElementById("updatePTInfoBan").value="可以修改";
+
             var phone1 = document.getElementById("phone1");
             var email = document.getElementById("email");
             var phone2 = document.getElementById("phone2");
@@ -169,7 +275,7 @@
             var comTeacherName = document.getElementById("comTeacherName");
             var phone3 = document.getElementById("phone3");
             var ptTitle = document.getElementById("ptTitle");
-            var city = document.getElementById("city");
+            var city = document.getElementById("ptCity");
             phone1.removeAttribute("disabled");
             email.removeAttribute("disabled");
             phone2.removeAttribute("disabled");
@@ -182,12 +288,17 @@
             return true;
         }
     }
-    function submit_sure(){
+    function submit_sure(val1,val2){
         //如果时间格式是正确的，那下面这一步转化时间格式就可以不用了
         // var dateBegin = new Date(d1.replace(/-/g, "/"));//将-转化为/，使用new Date
         // var dateEnd = new Date(d2.replace(/-/g, "/"));//将-转化为/，使用new Date
-         var d1="2019-04-15 20:42:00";
-         var d2="2019-04-15 20:43:00"
+        //  var d1="2019-04-15 20:42:00";
+        // var d1 = val1+" 00:00:00";
+        //  var d2 = val2+" 23:59:59"
+
+        var d1 = val1.substring(1,val1.length-1);
+        var d2 = val2.substring(1,val2.length-1);
+
         var dateBegin = new Date(d1);//将-转化为/，使用new Date
         var dateEnd = new Date(d2);//将-转化为/，使用new Date
         var dateNow = new Date();//获取当前时间
@@ -197,20 +308,47 @@
 
         var endDiff = dateEnd.getTime() - dateNow.getTime();//时间差的毫秒数
         var endDayDiff = Math.floor(endDiff / (24 * 3600 * 1000));//计算出相差天数
-        if (endDayDiff < 0) {//已过期
-            alert ("当前时间是：" + dateNow.getHours () + ":" + dateNow.getMinutes () + "，不在该时间范围内！");
+        if (endDayDiff < 0) {//超过修改时间，不能做修改操作
+            alert ("当前时间是：" + dateNow + ",操作时间已过！");
             return false;
-        }else if (beginDayDiff < 0) {//没到开始时间
-            alert ("当前时间是：" + dateNow.getHours () + ":" + dateNow.getMinutes () + "，不在该时间范围内！");
+        }else if (beginDayDiff < 0) {//还没有到修改时间，不能做修改操作
+            alert ("当前时间是：" + dateNow + "，未到操作时间！");
             return false;
-        }else {
-            var gnl = confirm("确认要提交");
-                if(gnl==true){
-                    return true;
-                }else{
-                    return false;
-                }
-            return true;
+        }else {//可以做修改操作
+            //正则表达式
+            var phoneFlag = /^1[34578]\d{9}$/;//联系方式
+            var emailFlag = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;//邮箱
+
+            var phone1 = document.getElementById("phone1").value;
+            var email = document.getElementById("email").value;
+            var phone2 = document.getElementById("phone2").value;
+            var ptType = document.getElementById("ptType");
+            var ptCompany = document.getElementById("ptCompany");
+            var comTeacherName = document.getElementById("comTeacherName");
+            var phone3 = document.getElementById("phone3").value;
+            var ptTitle = document.getElementById("ptTitle");
+            var city = document.getElementById("ptCity");
+
+            if(!phoneFlag.test(phone1)){
+                alert("联系方式格式有误！");
+                return false;
+            }else if(!emailFlag.test(email)){
+                alert("邮箱格式有误！");
+            }else if(!phoneFlag.test(phone2)){
+                alert("父母联系方式格式有误！");
+            }else if(ptCompany.length<1){
+                alert("实训公司名称不能为空！");
+            }else if(comTeacherName.length<1){
+                alert("校外指导老师姓名不能为空！");
+            }else if(!phoneFlag.test(phone3)){
+                alert("校外指导老师联系方式有误");
+            }else if(ptTitle.length<1){
+                alert("实训题目不能为空！");
+            }else if(city.length<1){
+                alert("实训城市不能为空！")
+            }else{
+            }
+
         }
 
     }
@@ -225,167 +363,7 @@
        }
     });
 
-    $(function(){
-        $('.skin-minimal input').iCheck({
-            checkboxClass: 'icheckbox-blue',
-            radioClass: 'iradio-blue',
-            increaseArea: '20%'
-        });
 
-        //表单验证
-        $("#form-article-add").validate({
-            rules:{
-                articletitle:{
-                    required:true,
-                },
-                articletitle2:{
-                    required:true,
-                },
-                articlecolumn:{
-                    required:true,
-                },
-                articletype:{
-                    required:true,
-                },
-                articlesort:{
-                    required:true,
-                },
-                keywords:{
-                    required:true,
-                },
-                abstract:{
-                    required:true,
-                },
-                author:{
-                    required:true,
-                },
-                sources:{
-                    required:true,
-                },
-                allowcomments:{
-                    required:true,
-                },
-                commentdatemin:{
-                    required:true,
-                },
-                commentdatemax:{
-                    required:true,
-                },
-
-            },
-            onkeyup:false,
-            focusCleanup:true,
-            success:"valid",
-            submitHandler:function(form){
-                //$(form).ajaxSubmit();
-                var index = parent.layer.getFrameIndex(window.name);
-                //parent.$('.btn-refresh').click();
-                parent.layer.close(index);
-            }
-        });
-
-        $list = $("#fileList"),
-            $btn = $("#btn-star"),
-            state = "pending",
-            uploader;
-
-        var uploader = WebUploader.create({
-            auto: true,
-            swf: 'lib/webuploader/0.1.5/Uploader.swf',
-
-            // 文件接收服务端。
-            server: 'fileupload.php',
-
-            // 选择文件的按钮。可选。
-            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
-            pick: '#filePicker',
-
-            // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
-            resize: false,
-            // 只允许选择图片文件。
-            accept: {
-                title: 'Images',
-                extensions: 'gif,jpg,jpeg,bmp,png',
-                mimeTypes: 'image/*'
-            }
-        });
-        uploader.on( 'fileQueued', function( file ) {
-            var $li = $(
-                '<div id="' + file.id + '" class="item">' +
-                '<div class="pic-box"><img></div>'+
-                '<div class="info">' + file.name + '</div>' +
-                '<p class="state">等待上传...</p>'+
-                '</div>'
-                ),
-                $img = $li.find('img');
-            $list.append( $li );
-
-            // 创建缩略图
-            // 如果为非图片文件，可以不用调用此方法。
-            // thumbnailWidth x thumbnailHeight 为 100 x 100
-            uploader.makeThumb( file, function( error, src ) {
-                if ( error ) {
-                    $img.replaceWith('<span>不能预览</span>');
-                    return;
-                }
-
-                $img.attr( 'src', src );
-            }, thumbnailWidth, thumbnailHeight );
-        });
-        // 文件上传过程中创建进度条实时显示。
-        uploader.on( 'uploadProgress', function( file, percentage ) {
-            var $li = $( '#'+file.id ),
-                $percent = $li.find('.progress-box .sr-only');
-
-            // 避免重复创建
-            if ( !$percent.length ) {
-                $percent = $('<div class="progress-box"><span class="progress-bar radius"><span class="sr-only" style="width:0%"></span></span></div>').appendTo( $li ).find('.sr-only');
-            }
-            $li.find(".state").text("上传中");
-            $percent.css( 'width', percentage * 100 + '%' );
-        });
-
-        // 文件上传成功，给item添加成功class, 用样式标记上传成功。
-        uploader.on( 'uploadSuccess', function( file ) {
-            $( '#'+file.id ).addClass('upload-state-success').find(".state").text("已上传");
-        });
-
-        // 文件上传失败，显示上传出错。
-        uploader.on( 'uploadError', function( file ) {
-            $( '#'+file.id ).addClass('upload-state-error').find(".state").text("上传出错");
-        });
-
-        // 完成上传完了，成功或者失败，先删除进度条。
-        uploader.on( 'uploadComplete', function( file ) {
-            $( '#'+file.id ).find('.progress-box').fadeOut();
-        });
-        uploader.on('all', function (type) {
-            if (type === 'startUpload') {
-                state = 'uploading';
-            } else if (type === 'stopUpload') {
-                state = 'paused';
-            } else if (type === 'uploadFinished') {
-                state = 'done';
-            }
-
-            if (state === 'uploading') {
-                $btn.text('暂停上传');
-            } else {
-                $btn.text('开始上传');
-            }
-        });
-
-        $btn.on('click', function () {
-            if (state === 'uploading') {
-                uploader.stop();
-            } else {
-                uploader.upload();
-            }
-        });
-
-        var ue = UE.getEditor('editor');
-
-    });
 </script>
 <!--/请在上方写此页面业务相关的脚本-->
 </body>

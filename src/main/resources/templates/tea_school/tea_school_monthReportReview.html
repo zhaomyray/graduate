@@ -24,99 +24,103 @@
     <title>月报审查</title>
 </head>
 
+<body>
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 软工实训管理系统 <span class="c-gray en">&gt;</span> 报告批阅 <span class="c-gray en">&gt;</span> 月报 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 
 <div class="page-container">
     <form class="form form-horizontal" id="form_teaSch_StuMonthReport" method="post"  th:action="@{/teaSchStuMonthSelectByWM}">
-        <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="r">共有数据：<strong>[[${session.teaSchStuMonthNum}]]</strong> 条</span> </div>
-        <table class="table table-border table-bordered table-bg">
-            <thead>
-            <tr>
-
-                <th scope="col" colspan="9">第
-                    <input id="monthMessageValue" type="hidden" name="monthValue"  th:value="${session.month}">
-                    <select name="monthMessage" id="monthMessage">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                    </select>
-                    月月报批阅信息&nbsp;&nbsp;
-
-                    <div class="col-xs-8 col-sm-9  col-sm-offset-3">
-                        <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;检索&nbsp;&nbsp;">
-                    </div>
-                </th>
-
-            </tr>
-            <tr class="text-c">
-                <!--<th width="25"><input type="checkbox" name="" value=""></th>-->
-                <th width="30">序号</th>
-                <th width="60">学号</th>
-                <th width="60">提交时间</th>
-                <th width="30">是否补交</th>
-                <th width="30">成绩</th>
-                <th width="40">操作</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr class="text-c" th:each="schStuMonthReport,monthStat:${monthReportList}" th:inline="none">
-                <td th:text="${monthStat.count}"/>
-                <td th:text="${schStuMonthReport.monthSno}"/>
-                <td th:text="${schStuMonthReport.time_submit}"/>
-                <td th:text="${schStuMonthReport.isAfter}"/>
-                <td th:text="${schStuMonthReport.score}"/>
-                <td>
-                    <a href="javascript:void(0)" th:onclick="inputMonthReport('[[${schStuMonthReport.content_monthReport}]]','[[${schStuMonthReport.monthSno}]]')">浏览</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
+        <tr>
+            <th scope="col" colspan="9">第
+                <input id="monthMessageValue" type="hidden" name="monthValue"  th:value="${session.month}">
+                <select name="monthMessage" id="monthMessage">
+                    <option th:each="item:${monthList}" th:text="${item.id}"
+                            th:value="${item.monthMessage}"></option>
+                </select>
+                月月报批阅信息&nbsp;&nbsp;
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;检索&nbsp;&nbsp;">
+            </th>
+        </tr>
     </form>
+    <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="r">共有数据：<strong>[[${session.teaSchStuMonthNum}]]</strong> 条</span> </div>
+            <table class="table table-border table-bordered table-bg">
+                <thead>
+                    <tr class="text-c">
+                        <th width="30">序号</th>
+                        <th width="60">学号</th>
+                        <th width="60">提交时间</th>
+                        <th width="30">是否补交</th>
+                        <th width="30">成绩</th>
+                        <th width="50">下载</th>
+                        <th width="40">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr class="text-c" th:each="schStuMonthReport,monthStat:${monthReportList}" th:inline="none">
+                    <td th:text="${monthStat.count}"/>
+                    <td th:text="${schStuMonthReport.monthSno}"/>
+                    <td th:text="${schStuMonthReport.time_submit}"/>
+                    <td th:text="${schStuMonthReport.isAfter}"/>
+                    <td th:text="${schStuMonthReport.score}"/>
+                    <td>
+                        <form th:action="@{/monthFileReportSchTeaDownload}" method="post" class="form-horizontal" id="form_monthReportSchTea_submit" enctype="multipart/form-data">
+                            <input type="text" th:value="${schStuMonthReport.monthReportFilePath}" id="monthReportSchTeaFilePath" name="monthReportSchTeaFilePath" style="display: none">
+                            <input type="text" th:value="${schStuMonthReport.monthSno}" id="monthReportFileSchTeaSno" name="monthReportFileSchTeaSno" style="display: none">
+                            <input type="text" th:value="${schStuMonthReport.monthMessage}" id="monthReportMessage" name="monthReportMessage" style="display: none">
+                            <input style="background:honeydew; border:0px" type="submit" th:onclick="downloadMonthFileSchTea_sure('[[${schStuMonthReport.monthReportFilePath}]]')" value="&nbsp;&nbsp;下载报告&nbsp;&nbsp;">
+                        </form>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" th:onclick="inputMonthReport('[[${schStuMonthReport.content_monthReport}]]','[[${schStuMonthReport.monthSno}]]','[[${schStuMonthReport.time_submit}]]')">浏览</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
 </div>
-<form class="form form-horizontal" id="form_teaSch_stuWeekScore" method="post"  th:action="@{/teaSchStuMonthInsertScore}" onsubmit="submit_sure()">
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>月期信息：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <input type="text" class="input-text" value="1" placeholder="1" id="monthMessage2" name="monthMessage2" readonly="true">
-        </div>
-    </div>
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <input type="text" class="input-text" value="" placeholder="" id="monthReportSno" name="monthSno" readonly="true">
-        </div>
-    </div>
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2">报告内容：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <textarea id="stuMonthReportContent" name="stuMonthReportContent" cols="" rows="" class="textarea"  placeholder="" onKeyUp="$.Huitextarealength(this,800)" disabled></textarea>
-            <!--<p class="textarea-numberbar"><em class="textarea-length">0</em>/800</p>-->
-        </div>
-    </div>
+<!--<form class="form form-horizontal" id="form_teaSch_stuWeekScore" method="post"  th:action="@{/teaSchStuMonthInsertScore}" onsubmit="submit_sure()">-->
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>月期信息：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<input type="text" class="input-text" value="1" placeholder="1" id="monthMessage2" name="monthMessage2" readonly="true">-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<input type="text" class="input-text" value="" placeholder="" id="monthReportSno" name="monthSno" readonly="true">-->
+            <!--<input type="text" value="" id="monthReportTime" name="monthReportTime">-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2">报告内容：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<textarea id="stuMonthReportContent" name="stuMonthReportContent" cols="" rows="" class="textarea"  placeholder="" onKeyUp="$.Huitextarealength(this,800)" disabled></textarea>-->
+            <!--&lt;!&ndash;<p class="textarea-numberbar"><em class="textarea-length">0</em>/800</p>&ndash;&gt;-->
+        <!--</div>-->
+    <!--</div>-->
 
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <input type="text" class="input-text" value="0" placeholder="分数为整数" id="monthScore" name="monthScore">
-        </div>
-    </div>
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<input type="text" class="input-text" value="0" placeholder="分数为整数" id="monthScore" name="monthScore">-->
+        <!--</div>-->
+    <!--</div>-->
 
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2">批语：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <textarea id="monthReview" name="monthReview" cols="" rows="" class="textarea"  placeholder="说点什么..." onKeyUp="$.Huitextarealength(this,200)"></textarea>
-            <!--<p class="textarea-numberbar"><em class="textarea-length">0</em>/200</p>-->
-        </div>
-    </div>
-    <div class="row cl">
-        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-            <input class="btn btn-primary radius" type="submit" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
-            <input class="btn btn-primary radius" type="reset" value="&nbsp;&nbsp;重置&nbsp;&nbsp;">
-        </div>
-    </div>
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2">批语：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<textarea id="monthReview" name="monthReview" cols="" rows="" class="textarea"  placeholder="说点什么..." onKeyUp="$.Huitextarealength(this,200)"></textarea>-->
+            <!--&lt;!&ndash;<p class="textarea-numberbar"><em class="textarea-length">0</em>/200</p>&ndash;&gt;-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row cl">-->
+        <!--<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">-->
+            <!--<input type="text" value="" id="isSubmit" name="isSubmit">-->
+            <!--<input class="btn btn-primary radius" type="submit" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">-->
+            <!--<input class="btn btn-primary radius" type="reset" value="&nbsp;&nbsp;重置&nbsp;&nbsp;">-->
+        <!--</div>-->
+    <!--</div>-->
 
-</form>
-</html>
+<!--</form>-->
 
 
 
@@ -149,234 +153,121 @@
     $(document).ready(function(){
         var Flag=$("#monthMessageValue").val();
 
-        document.getElementById("monthMessage2").value=Flag;
-        // if(Flag==1){
         $("#monthMessage option[value='"+Flag+"']").attr("selected","selected");
-        // }else if(Flag==2){
-        //     $("#weekMessage option[value='"+Flag+"']").attr("selected","selected");
-        // }else if(Flag==3){
-        //     $("#ptType option[value='"+Flag+"']").attr("selected","selected");
-        // }else{
-        //     $("#ptType option[value='"+Flag+"']").attr("selected","selected");
-        // }
+
+        document.getElementById("monthMessage2").value=Flag;
+        document.getElementById("monthReportFileSchTeaMonthMessage").value=Flag;
     });
-    function inputMonthReport(val1,val2){
-        var t1 = document.getElementById("stuMonthReportContent");
-        if(val1==0){
-            t1.value="未提交报告";
-        }else{
-            t1.value=val1;
-        }
-        document.getElementById("monthReportSno").value=val2;
+    function inputMonthReport(val1,val2,val3){
+        // var t1 = document.getElementById("stuMonthReportContent");
+        // if(val1==0){
+        //     t1.value="未提交报告";
+        // }else{
+        //     t1.value=val1.substring(1,val1.length-1);
+        // }
+        // document.getElementById("monthReportSno").value=val2.substring(1,val2.length-1);
+        // document.getElementById("monthReportTime").value=val3.substring(1,val3.length-1);
+
+        var content = val1.substring(1,val1.length-1);
+        var monthSno = val2.substring(1,val2.length-1);
+        var monthTime = val3.substring(1,val3.length-1);
+
+        layer.open({
+            type: 1,
+            area: ['750px', '550px'],
+            fix: false, //不固定
+            btnAlign: 'c',
+            maxmin: true,
+            shade: 0.4,
+            title: '周报信息',
+            content:'<form class="form form-horizontal" id="form_teaSch_stuWeekScore" method="post"  th:action="@{/teaSchStuMonthInsertScore}" onsubmit="submit_sure()">\n' +
+                '    <div class="row cl">\n' +
+                '        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>月期信息：</label>\n' +
+                '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                '            <input type="text" class="input-text" value="[[${session.month}]]" placeholder="1" id="monthMessage2" name="monthMessage2" readonly="true">\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '    <div class="row cl">\n' +
+                '        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>\n' +
+                '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                '            <input type="text" class="input-text" value="'+monthSno+'" placeholder="" id="monthReportSno" name="monthSno" readonly="true">\n' +
+                '            <input type="text" value="'+monthTime+'" id="monthReportTime" name="monthReportTime" style="display:none;">\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '    <div class="row cl">\n' +
+                '        <label class="form-label col-xs-4 col-sm-2">报告内容：</label>\n' +
+                '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                '            <textarea id="stuMonthReportContent" name="stuMonthReportContent" cols="" rows="" class="textarea"  placeholder="" onKeyUp="$.Huitextarealength(this,800)" disabled>'+content+'</textarea>\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '\n' +
+                '    <div class="row cl">\n' +
+                '        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>\n' +
+                '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                '            <input type="text" class="input-text" value="0" placeholder="分数为整数" id="monthScore" name="monthScore">\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '\n' +
+                '    <div class="row cl">\n' +
+                '        <label class="form-label col-xs-4 col-sm-2">批语：</label>\n' +
+                '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                '            <textarea id="monthReview" name="monthReview" cols="" rows="" class="textarea"  placeholder="说点什么..." onKeyUp="$.Huitextarealength(this,200)"></textarea>\n' +
+                '            <!--<p class="textarea-numberbar"><em class="textarea-length">0</em>/200</p>-->\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '    <div class="row cl">\n' +
+                '        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">\n' +
+                '            <input type="text" value="" id="isSubmit" name="isSubmit" style="display: none">\n' +
+                '            <input class="btn btn-primary radius" type="submit" id="submitMonthScore" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;" style="display: none">\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '\n' +
+                '</form>',
+            btn:['提交','取消'],
+            btn1:function(){
+                $('#submitMonthScore').submit();
+                var monthMessage2 = document.getElementById("monthMessage2").value;
+                var sno = document.getElementById("monthReportSno").value;
+                var review = document.getElementById("monthReview").value;
+                var isSubmit = document.getElementById("isSubmit").value;
+                var score = document.getElementById("monthScore").value;
+
+                $.post("/teaSchStuMonthInsertScore/"+monthMessage2+","+sno+","+review+","+isSubmit+","+score);
+                layer.closeAll();
+            }
+        });
+
     }
 
     function submit_sure(){
         var stu = document.getElementById("monthReportSno").value;
-        var a = document.getElementById("stuMonthReportContent").value;
+        var time = document.getElementById("monthReportTime").value;
+        var score = document.getElementById("monthScore").value;
+
         if(stu==""){
-            alert("未选中学生");
-            return false;
+            document.getElementById("isSubmit").value="无法提交";
+            alert("未选中学生！");
         }else {
-            if(a=="null"||a==""){
-                alert("该生未提交报告");
-                return false;
-            }
-            return true;
+           if(time=="未提交"){
+               document.getElementById("isSubmit").value="无法提交";
+               alert("该生未提交报告!");
+           }else if(isNaN(score)||score<0||score>100||!(/^\d+$/.test(score))){
+                document.getElementById("isSubmit").value="无法提交";
+                alert("成绩需要为0~100的整数！");
+           }else{
+                document.getElementById("isSubmit").value="提交";
+           }
         }
     }
 
+
+    function downloadMonthFileSchTea_sure(valPath){
+        var weekFile = valPath.substring(1,valPath.length-1);
+        if(weekFile=="未提交文件"){
+            alert("未提交文件，下载失败！");
+        }
+        alert(weekFile);
+    }
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!--<!DOCTYPE HTML>-->
-<!--<html xmlns:th="http://www.w3.org/1999/xhtml">-->
-<!--<head>-->
-    <!--<meta charset="utf-8">-->
-    <!--<meta name="renderer" content="webkit|ie-comp|ie-stand">-->
-    <!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">-->
-    <!--<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />-->
-    <!--<meta http-equiv="Cache-Control" content="no-siteapp" />-->
-    <!--<link rel="Bookmark" href="/favicon.ico" >-->
-    <!--<link rel="Shortcut Icon" href="/favicon.ico" />-->
-    <!--&lt;!&ndash;[if lt IE 9]>-->
-    <!--<script type="text/javascript" src="lib/html5shiv.js"></script>-->
-    <!--<script type="text/javascript" src="lib/respond.min.js"></script>-->
-    <!--<![endif]&ndash;&gt;-->
-    <!--<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />-->
-    <!--<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />-->
-    <!--<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />-->
-    <!--<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />-->
-    <!--<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />-->
-    <!--&lt;!&ndash;[if IE 6]>-->
-    <!--<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>-->
-    <!--<script>DD_belatedPNG.fix('*');</script>-->
-    <!--<![endif]&ndash;&gt;-->
-    <!--<title>月报审查</title>-->
-<!--</head>-->
-<!--<body>-->
-<!--<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 软工实训管理系统 <span class="c-gray en">&gt;</span> 报告审查 <span class="c-gray en">&gt;</span> 月报 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>-->
-
-    <!--<div class="page-container">-->
-        <!--<form class="form form-horizontal" id="form_teaSch_StuMonthReport" method="post"  th:action="@{/teaSchStuMonthSelectByWM}">-->
-         <!--<div class="cl pd-5 bg-1 bk-gray mt-20"><span class="r">共有数据：<strong>[[${session.teaSchStuMonthNum}]]</strong> 条</span> </div>-->
-    <!--<table class="table table-border table-bordered table-bg">-->
-        <!--<thead>-->
-        <!--<tr>-->
-            <!--<th scope="col" colspan="9">第-->
-                <!--<input id="monthMessageValue" type="hidden" name="monthValue"  th:value="${session.month}">-->
-                <!--<select name="monthMessage" id="monthMessage">-->
-                    <!--<option value="1">1</option>-->
-                    <!--<option value="2">2</option>-->
-                <!--</select>-->
-                <!--月月报详细信息&nbsp;&nbsp;-->
-            <!--<div class="col-xs-8 col-sm-9  col-sm-offset-3">-->
-                <!--<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;检索&nbsp;&nbsp;">-->
-            <!--</div>-->
-        <!--</tr>-->
-        <!--<tr class="text-c">-->
-            <!--&lt;!&ndash;<th width="25"><input type="checkbox" name="" value=""></th>&ndash;&gt;-->
-            <!--<th width="30">序号</th>-->
-            <!--<th width="60">学号</th>-->
-            <!--<th width="60">提交时间</th>-->
-            <!--<th width="30">是否补交</th>-->
-            <!--<th width="30">分数</th>-->
-            <!--<th width="40">操作</th>-->
-        <!--</tr>-->
-        <!--</thead>-->
-        <!--<tbody>-->
-        <!--<tr class="text-c" th:each="schStuMonthReport,monthStat:${monthReportList}" th:inline="none">-->
-            <!--<td th:text="${monthStat.count}"/>-->
-            <!--<td th:text="${schStuMonthReport.monthSno}"/>-->
-            <!--<td th:text="${schStuMonthReport.time_submit}"/>-->
-            <!--<td th:text="${schStuMonthReport.isAfter}"/>-->
-            <!--<td th:text="${schStuMonthReport.score}"/>-->
-            <!--<td>-->
-                <!--<a href="javascript:void(0)" th:onclick="inputMonthReport('[[${schStuMonthReport.content_monthReport}]]','[[${schStuMonthReport.monthSno}]]')">浏览</a>-->
-            <!--</td>-->
-        <!--</tr>-->
-        <!--</tbody>-->
-    <!--</table>-->
-        <!--</form>-->
-<!--</div>-->
-
-
-<!--<form class="form form-horizontal" id="form_teaSch_stuMonthScore" method="post"  th:action="@{/teaSchStuMonthInsertScore}" onsubmit="submit_sure()">-->
-    <!--<div class="row cl">-->
-        <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>周期信息：</label>-->
-        <!--<div class="formControls col-xs-8 col-sm-9">-->
-            <!--<input type="text" class="input-text" value="1" placeholder="1" id="monthMessage2" name="monthMessage2" readonly="true">-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--<div class="row cl">-->
-        <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>-->
-        <!--<div class="formControls col-xs-8 col-sm-9">-->
-            <!--<input type="text" class="input-text" value="" placeholder="" id="monthReportSno" name="monthSno" readonly="true">-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--<div class="row cl">-->
-        <!--<label class="form-label col-xs-4 col-sm-2">报告内容：</label>-->
-        <!--<div class="formControls col-xs-8 col-sm-9">-->
-            <!--<textarea name="stuMonthReportContent" cols="" rows="" class="textarea"  placeholder="eee" onKeyUp="$.Huitextarealength(this,800)" disabled></textarea>-->
-            <!--<p class="textarea-numberbar"><em class="textarea-length">0</em>/800</p>-->
-        <!--</div>-->
-    <!--</div>-->
-
-    <!--<div class="row cl">-->
-        <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>-->
-        <!--<div class="formControls col-xs-8 col-sm-9">-->
-            <!--<input type="text" class="input-text" value="" placeholder="" id="monthScore" name="monthScore">-->
-        <!--</div>-->
-    <!--</div>-->
-
-    <!--<div class="row cl">-->
-        <!--<label class="form-label col-xs-4 col-sm-2">批语：</label>-->
-        <!--<div class="formControls col-xs-8 col-sm-9">-->
-            <!--<textarea name="monthReview" cols="" rows="" class="textarea"  placeholder="说点什么...最多输入100个字符" onKeyUp="$.Huitextarealength(this,100)"></textarea>-->
-            <!--<p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--<div class="row cl">-->
-        <!--<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">-->
-            <!--<input class="btn btn-primary radius" type="submit" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">-->
-            <!--<input class="btn btn-primary radius" type="reset" value="&nbsp;&nbsp;重置&nbsp;&nbsp;">-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--<br>-->
-<!--</form>-->
-<!--&lt;!&ndash;&lt;!&ndash;_footer 作为公共模版分离出去&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>&ndash;&gt;-->
-<!--&lt;!&ndash;<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>&ndash;&gt;-->
-<!--&lt;!&ndash;<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>&ndash;&gt;-->
-<!--&lt;!&ndash;<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> &lt;!&ndash;/_footer 作为公共模版分离出去&ndash;&gt;&ndash;&gt;-->
-
-<!--&lt;!&ndash;&lt;!&ndash;请在下方写此页面业务相关的脚本&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;<script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>&ndash;&gt;-->
-<!--&lt;!&ndash;<script type="text/javascript" src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script>&ndash;&gt;-->
-<!--&lt;!&ndash;<script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>&ndash;&gt;-->
-<!--<script type="text/javascript">-->
-
-    <!--/*管理员-编辑*/-->
-    <!--function admin_edit(title,url,id,w,h){-->
-        <!--layer_show(title,url,w,h);-->
-    <!--}-->
-
-    <!--$(document).ready(function(){-->
-        <!--var Flag=$("#monthMessageValue").val();-->
-
-        <!--// document.getElementById("monthMessage2").value=Flag;-->
-        <!--$("#monthMessage option[value='"+Flag+"']").attr("selected","selected");-->
-
-    <!--});-->
-    <!--function inputMonthReport(val1,val2){-->
-        <!--var t1 = document.getElementById("stuMonthReportContent");-->
-        <!--if(val1==""){-->
-            <!--t1.value="未提交报告";-->
-        <!--}else{-->
-            <!--t1.value=val1;-->
-        <!--}-->
-        <!--document.getElementById("monthReportSno").value=val2;-->
-    <!--}-->
-
-    <!--function submit_sure(){-->
-        <!--var stu = document.getElementById("monthReportSno").value;-->
-        <!--var a = document.getElementById("stuMonthReportContent").value;-->
-        <!--if(stu==""){-->
-            <!--alert("未选中学生");-->
-            <!--return false;-->
-        <!--}else {-->
-            <!--if(a=="null"||a==""){-->
-                <!--alert("该生未提交报告");-->
-                <!--return false;-->
-            <!--}-->
-            <!--return true;-->
-        <!--}-->
-    <!--}-->
-
-    <!--// &lt;!&ndash;/*管理员-编辑*/&ndash;&gt;-->
-    <!--// &lt;!&ndash;function admin_edit(title,url,id,w,h){&ndash;&gt;-->
-    <!--//     &lt;!&ndash;layer_show(title,url,w,h);&ndash;&gt;-->
-    <!--// &lt;!&ndash;}&ndash;&gt;-->
-
-
-
-<!--</script>-->
-<!--</body>-->
-<!--</html>-->

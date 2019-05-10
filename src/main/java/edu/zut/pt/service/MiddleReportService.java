@@ -14,6 +14,20 @@ public interface MiddleReportService {
     public int insertMiddleReport(MiddleReport middleReport);
 
     /**
+     * 更新中期报告内容
+     * @return
+     */
+    public int updateMiddleReport(String middleSno,String content_midReport,String time_submit,String isAfter,String middleReportFilePath,String middleReportIsUpdate);
+
+    /**
+     * 更新报告状态
+     * @param middleReportIsUpdate
+     * @param middleSno
+     * @return
+     */
+    public int updateMiddleReportIsUpdate(String middleReportIsUpdate,String middleSno);
+
+    /**
      * 根据学号查找中期报告，返回list
      * @param middleSno
      * @return

@@ -16,45 +16,41 @@
     <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
     <link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
     <link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
-    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
-    <!--[if IE 6]>
-    <script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
-    <script>DD_belatedPNG.fix('*');</script>
-    <![endif]-->
     <title>周报审查</title>
+    <style>
+        /*.btn{*/
+            /*background-color:transparent;*/
+            /*border: 0px;*/
+        /*}*/
+    </style>
 </head>
-
+<body>
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 软工实训管理系统 <span class="c-gray en">&gt;</span> 报告审查 <span class="c-gray en">&gt;</span> 周报 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 
 <div class="page-container">
     <form class="form form-horizontal" id="form_teaSch_StuWeekReport" method="post"  th:action="@{/teaSchStuWeekSelectByWM}">
-    <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="r">共有数据：<strong>[[${session.teaSchStuWeekNum}]]</strong> 条</span> </div>
-    <table class="table table-border table-bordered table-bg">
-        <thead>
         <tr>
-
             <th scope="col" colspan="9">第
                 <input id="weekMessageValue" type="hidden" name="weekValue"  th:value="${session.week}">
                 <select name="weekMessage" id="weekMessage">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
+                    <option th:each="item:${weekList}" th:text="${item.id}"
+                            th:value="${item.weekMessage}"></option>
                 </select>
                 周周报批阅信息&nbsp;&nbsp;
 
-                    <div class="col-xs-8 col-sm-9  col-sm-offset-3">
-                        <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;检索&nbsp;&nbsp;">
-                    </div>
+                <!--<div class="col-xs-8 col-sm-9  col-sm-offset-3">-->
+                    <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;检索&nbsp;&nbsp;">
+                <!--</div>-->
+
             </th>
 
         </tr>
+    </form>
+    <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="r">共有数据：<strong>[[${session.teaSchStuWeekNum}]]</strong> 条</span> </div>
+    <!--<form th:action="@{/weekFileReportSchTeaDownload}" method="post" class="form-horizontal" id="form_weekReportSchTea_submit" enctype="multipart/form-data">-->
+        <table class="table table-border table-bordered table-bg">
+        <thead>
+
         <tr class="text-c">
             <!--<th width="25"><input type="checkbox" name="" value=""></th>-->
             <th width="30">序号</th>
@@ -62,6 +58,7 @@
             <th width="60">提交时间</th>
             <th width="30">是否补交</th>
             <th width="30">成绩</th>
+            <th width="50">下载</th>
             <th width="40">操作</th>
         </tr>
         </thead>
@@ -73,58 +70,68 @@
             <td th:text="${schStuWeekReport.isAfter}"/>
             <td th:text="${schStuWeekReport.score}"/>
             <td>
-                <a href="javascript:void(0)" th:onclick="inputWeekReport('[[${schStuWeekReport.content_weekReport}]]','[[${schStuWeekReport.weekSno}]]')">浏览</a>
+                <form th:action="@{/weekFileReportSchTeaDownload}" method="post" class="form-horizontal" id="form_weekReportSchTea_submit">
+                    <input type="text" th:value="${schStuWeekReport.weekReportFilePath}" id="weekReportFileSchTeaPath" name="weekReportSchTeaFilePath" style="display: none">
+                    <input type="text" th:value="${schStuWeekReport.weekSno}" id="weekReportFileSchTeaSno" name="weekReportFileSchTeaSno" style="display: none">
+                    <input type="text" th:value="${schStuWeekReport.weekMessage}" id="weekReportMessage" name="weekReportMessage" style="display: none">
+                    <input  type="submit" style="background:honeydew; border:0px" th:onclick="downloadWeekFileSchTea_sure('[[${schStuWeekReport.weekReportFilePath}]]')" value="&nbsp;&nbsp;下载报告&nbsp;&nbsp;">
+                </form>
+            </td>
+            <td>
+                <!--<a  data-href="/welcome.html" th:onclick="updatePsd('修改密码','welcome.html','[[${schStuWeekReport.weekSno}]]')">浏览</a>-->
+                <a href="javascript:void(0)" th:onclick="inputWeekReport('[[${schStuWeekReport.content_weekReport}]]','[[${schStuWeekReport.weekSno}]]','[[${schStuWeekReport.time_submit}]]')">浏览</a>
             </td>
         </tr>
         </tbody>
     </table>
-
     </form>
+
 </div>
-    <form class="form form-horizontal" id="form_teaSch_stuWeekScore" method="post"  th:action="@{/teaSchStuWeekInsertScore}" onsubmit="submit_sure()">
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>周期信息：</label>
-            <div class="formControls col-xs-8 col-sm-9">
-                <input type="text" class="input-text" value="1" placeholder="1" id="weekMessage2" name="weekMessage2" readonly="true">
-            </div>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>
-            <div class="formControls col-xs-8 col-sm-9">
-                <input type="text" class="input-text" value="" placeholder="" id="weekReportSno" name="weekSno" readonly="true">
-            </div>
-        </div>
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2">报告内容：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <textarea id="stuWeekReportContent" name="stuWeekReportContent" cols="" rows="" class="textarea"  placeholder="" onKeyUp="$.Huitextarealength(this,800)" disabled></textarea>
-            <p class="textarea-numberbar"><em class="textarea-length">0</em>/800</p>
-        </div>
-    </div>
+    <!--<form class="form form-horizontal" id="form_teaSch_stuWeekScore" method="post"  th:action="@{/teaSchStuWeekInsertScore}" onsubmit="submit_sure()">-->
+        <!--<div class="row cl">-->
+            <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>周期信息：</label>-->
+            <!--<div class="formControls col-xs-8 col-sm-9">-->
+                <!--<input type="text" class="input-text" value="1" id="weekMessage2" name="weekMessage2" readonly="true">-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="row cl">-->
+            <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>-->
+            <!--<div class="formControls col-xs-8 col-sm-9">-->
+                <!--<input type="text" class="input-text" value="" placeholder="" id="weekReportSno" name="weekSno" readonly="true">-->
+                <!--<input type="text" class="input-text" value="" placeholder="" id="weekReportTime" name="weekReportTime" >-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2">报告内容：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<textarea id="stuWeekReportContent" name="stuWeekReportContent" cols="" rows="" class="textarea"  placeholder="" onKeyUp="$.Huitextarealength(this,800)" disabled></textarea>-->
+            <!--<p class="textarea-numberbar"><em class="textarea-length">0</em>/800</p>-->
+        <!--</div>-->
+    <!--</div>-->
 
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <input type="text" class="input-text" value="0" placeholder="分数为整数" id="weekScore" name="weekScore">
-        </div>
-    </div>
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<input type="text" class="input-text" value="0" placeholder="分数为整数" id="weekScore" name="weekScore">-->
+        <!--</div>-->
+    <!--</div>-->
 
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2">批语：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <textarea id="weekReview" name="weekReview" cols="" rows="" class="textarea"  placeholder="说点什么..." onKeyUp="$.Huitextarealength(this,200)"></textarea>
-            <p class="textarea-numberbar"><em class="textarea-length">0</em>/200</p>
-        </div>
-    </div>
-    <div class="row cl">
-        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-            <input class="btn btn-primary radius" type="submit" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
-            <input class="btn btn-primary radius" type="reset" value="&nbsp;&nbsp;重置&nbsp;&nbsp;">
-        </div>
-    </div>
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2">批语：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<textarea id="weekReview" name="weekReview" cols="" rows="" class="textarea"  placeholder="说点什么..." onKeyUp="$.Huitextarealength(this,200)"></textarea>-->
+            <!--<p class="textarea-numberbar"><em class="textarea-length">0</em>/200</p>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row cl">-->
+        <!--<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">-->
+            <!--<input type="text" value="" name="isSubmit" id="isSubmit">-->
+            <!--<input class="btn btn-primary radius" type="submit" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">-->
+            <!--<input class="btn btn-primary radius" type="reset" value="&nbsp;&nbsp;重置&nbsp;&nbsp;">-->
+        <!--</div>-->
+    <!--</div>-->
 
-</form>
-</html>
+<!--</form>-->
 
 
 
@@ -148,48 +155,131 @@
         h		弹出层高度（缺省调默认值）
     */
 
+    // function updatePsd(title,url,sno){
+    //     alert(sno);
+    //     layer_show(title,url);
+    // }
+
 
     /*管理员-编辑*/
     function admin_edit(title,url,id,w,h){
         layer_show(title,url,w,h);
     }
 
+    function downloadWeekFileSchTea_sure(valPath){
+        var weekFile = valPath.substring(1,valPath.length-1);
+        if(weekFile=="未提交文件"){
+            alert("未提交文件，下载失败！");
+        }
+    }
+
     $(document).ready(function(){
         var Flag=$("#weekMessageValue").val();
 
+        $("#weekMessage option[value='"+Flag+"']").attr("selected","selected");
+
         document.getElementById("weekMessage2").value=Flag;
-        // if(Flag==1){
-            $("#weekMessage option[value='"+Flag+"']").attr("selected","selected");
-        // }else if(Flag==2){
-        //     $("#weekMessage option[value='"+Flag+"']").attr("selected","selected");
-        // }else if(Flag==3){
-        //     $("#ptType option[value='"+Flag+"']").attr("selected","selected");
-        // }else{
-        //     $("#ptType option[value='"+Flag+"']").attr("selected","selected");
-        // }
+        document.getElementById("weekReportFileSchTeaWeekMessage").value=Flag;
     });
-    function inputWeekReport(val1,val2){
-        var t1 = document.getElementById("stuWeekReportContent");
-        if(val1==0){
-            t1.value="未提交报告";
-        }else{
-            t1.value=val1;
+
+    function inputWeekReport(val1,val2,val3){
+
+        // if(val1==0){
+        //     document.getElementById("stuWeekReportContent").value="未提交报告";
+        // }else{
+        //     document.getElementById("stuWeekReportContent").value=val1.substring(1,val1.length-1);
+        // }
+        // document.getElementById("weekReportSno").value=val2.substring(1,val2.length-1);
+        // document.getElementById("weekReportTime").value=val3.substring(1,val3.length-1);
+        // var content = document.getElementById("stuWeekReportContent").value;
+        var content = val1.substring(1,val1.length-1);
+        var sno = val2.substring(1,val2.length-1);
+        var time = val3.substring(1,val3.length-1);
+        layer.open({
+            type: 1,
+            area: ['750px', '550px'],
+            fix: false, //不固定
+            btnAlign: 'c',
+            maxmin: true,
+            shade: 0.4,
+            title: '周报信息',
+            content:
+                '<form class="form form-horizontal" id="form_teaSch_stuWeekScore" method="post"  th:action="@{/teaSchStuWeekInsertScore}" onsubmit="submit_sure()">'+
+               ' <div class="row cl">\n' +
+                '            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>周期信息：</label>\n' +
+                '            <div class="formControls col-xs-8 col-sm-9">\n' +
+                '                <input type="text" class="input-text" value="[[${session.week}]]" id="weekMessage2" name="weekMessage2" readonly="true">\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '        <div class="row cl">\n' +
+                '            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>\n' +
+                '            <div class="formControls col-xs-8 col-sm-9">\n' +
+                '                <input type="text" class="input-text" value="'+sno+'" placeholder="" id="weekReportSno" name="weekSno" readonly="true">\n' +
+                '                <input type="text" class="input-text" value="'+time+'" placeholder="" id="weekReportTime" name="weekReportTime" style="display: none">\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '    <div class="row cl">\n' +
+                '        <label class="form-label col-xs-4 col-sm-2">报告内容：</label>\n' +
+                '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                '            <textarea id="stuWeekReportContent" name="stuWeekReportContent" cols="" rows="" class="textarea" placeholder=""  onKeyUp="$.Huitextarealength(this,800)" disabled>'+content+'</textarea>\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '\n' +
+                '    <div class="row cl">\n' +
+                '        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>\n' +
+                '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                '            <input type="text" class="input-text" value="0" placeholder="分数为整数" id="weekScore" name="weekScore">\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '\n' +
+                '    <div class="row cl">\n' +
+                '        <label class="form-label col-xs-4 col-sm-2">批语：</label>\n' +
+                '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                '            <textarea id="weekReview" name="weekReview" cols="" rows="" class="textarea"  placeholder="说点什么..." onKeyUp="$.Huitextarealength(this,200)"></textarea>\n' +
+                '            <p class="textarea-numberbar"><em class="textarea-length">0</em>/200</p>\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '    <div class="row cl">\n' +
+                '        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">\n' +
+                '            <input type="text" value="" name="isSubmit" id="isSubmit" style="display: none">\n' +
+                '            <input class="btn btn-primary radius" type="submit" id="submitWeekScore" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;" style="display: none">\n' +
+                '        </div>\n' +
+                '    </div>'+
+                '</form>',
+            btn:['提交','取消'],
+            btn1:function(){
+                $('#submitWeekScore').submit();
+                var weekMessage = document.getElementById("weekMessage2").value;
+                var sno = document.getElementById("weekReportSno").value;
+                var review = document.getElementById("weekReview").value;
+                var isSubmit = document.getElementById("isSubmit").value;
+                var score = document.getElementById("weekScore").value;
+
+                $.post("/teaSchStuWeekInsertScore/"+weekMessage+","+sno+","+review+","+isSubmit+","+score);
+                layer.closeAll();
         }
-        document.getElementById("weekReportSno").value=val2;
+        });
     }
 
     function submit_sure(){
         var stu = document.getElementById("weekReportSno").value;
-        var a = document.getElementById("stuWeekReportContent").value;
-        if(stu==""){
+        var time = document.getElementById("weekReportTime").value;
+        var score = document.getElementById("weekScore").value;
+        if(stu==""){//没有选中学生无法操作
+            document.getElementById("isSubmit").value="无法提交";
             alert("未选中学生");
             return false;
-        }else {
-            if(a=="null"||a==""){
-            alert("该生未提交报告");
+        }else {//选中了学生，
+            if(time=="未提交") {
+                document.getElementById("isSubmit").value="无法提交";
+                alert("该生未提交报告");
+            }else if(isNaN(score)||score<0||score>100||!(/^\d+$/.test(score))){
+                document.getElementById("isSubmit").value="无法提交";
+                alert("成绩需要为0~100的整数！");
+            }else{
+                document.getElementById("isSubmit").value="提交";
+            }
             return false;
-        }
-            return true;
         }
     }
 

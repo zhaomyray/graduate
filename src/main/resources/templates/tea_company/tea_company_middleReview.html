@@ -38,42 +38,50 @@
             <th width="30">序号</th>
             <th width="60">学号</th>
             <th width="50">成绩</th>
+            <th width="50">下载</th>
             <th width="40">操作</th>
         </tr>
         </thead>
         <tbody>
         <tr class="text-c" th:each="comMiddleScore,comMiddleScoreStat:${stuComMiddleScore}" th:inline="none">
             <td th:text="${comMiddleScoreStat.count}"/>
-            <td th:text="${comMiddleScore.comSno}"/>
+            <td th:text="${comMiddleScore.sno}"/>
             <td th:text="${comMiddleScore.middleScore}"/>
             <td>
-                <a href="javascript:void(0)" th:onclick="inputMiddleScore('[[${comMiddleScore.comSno}]]')">评分</a>
+                <form th:action="@{/comTeaMiddleReportDownload}" method="post" class="form-horizontal" id="form_schTeaMiddleReport_submit" enctype="multipart/form-data">
+                    <input type="text" th:value="${comMiddleScore.middleFilePath}" id="comTeaMiddleReportFilePath" name="comTeaMiddleReportFilePath">
+                    <!--<input type="text" th:value="${comMiddleScore.middleSno}" id="schTeaMiddleReportSno" name="schTeaMiddleReportSno" style="display: none">-->
+                    <input style="background:honeydew; border:0px" type="submit" th:onclick="downloadWeekFile_sure('[[${comMiddleScore.middleFilePath}]]')" value="&nbsp;&nbsp;下载报告&nbsp;&nbsp;">
+                </form>
+            </td>
+            <td>
+                <a href="javascript:void(0)" th:onclick="inputMiddleScore('[[${comMiddleScore.sno}]]','[[${comMiddleScore.middleFilePath}]]','[[${comMiddleScore.middleScore}]]')">评分</a>
             </td>
         </tr>
         </tbody>
     </table>
 </div>
 
-<form class="form form-horizontal" id="form_teaCom_stuMiddleScore" method="post"  th:action="@{/comTeaInsertMiddleScore}" onsubmit="submit_sure()">
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <input type="text" class="input-text" value="" placeholder="" id="middleScoreSno" name="middleScoreSno" readonly="true">
-        </div>
-    </div>
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <input type="text" class="input-text" value="0" placeholder="分数为整数" id="middleScore" name="middleScore">
-        </div>
-    </div>
-    <div class="row cl">
-        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-            <input class="btn btn-primary radius" type="submit" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
-            <!--<input class="btn btn-primary radius" type="reset" value="&nbsp;&nbsp;取消&nbsp;&nbsp;">-->
-        </div>
-    </div>
-</form>
+<!--<form class="form form-horizontal" id="form_teaCom_stuMiddleScore" method="post"  th:action="@{/comTeaInsertMiddleScore}" onsubmit="submit_sure()">-->
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<input type="text" class="input-text" value="" placeholder="" id="middleScoreSno" name="middleScoreSno" readonly="true">-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<input type="text" class="input-text" value="0" placeholder="分数为整数" id="middleScore" name="middleScore">-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row cl">-->
+        <!--<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">-->
+            <!--<input class="btn btn-primary radius" type="submit" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">-->
+            <!--&lt;!&ndash;<input class="btn btn-primary radius" type="reset" value="&nbsp;&nbsp;取消&nbsp;&nbsp;">&ndash;&gt;-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</form>-->
 <!--_footer 作为公共模版分离出去-->
 <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
@@ -100,23 +108,82 @@
         layer_show(title,url,w,h);
     }
 
-    function inputMiddleScore(val1){
-        document.getElementById("middleScoreSno").value=val1;
+    function downloadWeekFile_sure(val1){
+
+        var filePath = val1.substring(1,val1.length-1);
+        if(filePath=="未提交文件"){
+            alert(filePath);
+        }
+
+    }
+
+    function inputMiddleScore(val1,val2,val3){
+
+        var sno = val1.substring(1,val1.length-1);
+        var filePath = val2.substring(1,val2.length-1);
+
+        layer.open({
+            type: 1,
+            area: ['500px', '350px'],
+            fix: false, //不固定
+            btnAlign: 'c',
+            maxmin: true,
+            shade: 0.4,
+            title: '周报信息',
+            content:
+                '<form class="form form-horizontal" id="form_teaCom_stuMiddleScore" method="post"  th:action="@{/comTeaInsertMiddleScore}" onsubmit="submit_sure()">\n' +
+                '    <div class="row cl">\n' +
+                '        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>\n' +
+                '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                '            <input type="text" class="input-text" value="'+sno+'" placeholder="" id="middleScoreSno" name="middleScoreSno" readonly="true">\n' +
+                '            <input type="text" id="isSubmitFile" name="isSubmitFile" value="'+filePath+'" style="display: none">' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '    <div class="row cl">\n' +
+                '        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>\n' +
+                '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                '            <input type="text" class="input-text" value="'+val3+'" placeholder="分数为整数" id="middleScore" name="middleScore">\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '    <div class="row cl">\n' +
+                '        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">\n' +
+                '           <input type="text" value="" id="isSubmit" name="isSubmit" style="display: none"> ' +
+                '           <input class="btn btn-primary radius" type="submit" id="submitComStuMiddleScore" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;" style="display: none">\n' +
+                '            <!--<input class="btn btn-primary radius" type="reset" value="&nbsp;&nbsp;取消&nbsp;&nbsp;">-->\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '</form>',
+            btn:['提交','取消'],
+            btn1:function(){
+
+                $('#submitComStuMiddleScore').submit();
+
+                var sno = document.getElementById("middleScoreSno").value;
+                var isSubmit = document.getElementById("isSubmit").value;
+                var score = document.getElementById("middleScore").value;
+
+                $.post("/comTeaInsertMiddleScore/"+sno+","+isSubmit+","+score);
+                // layer.closeAll();
+            }
+        });
+
+
     }
 
     function submit_sure(){
-        var stu = document.getElementById("middleScoreSno").value;
-        var a = document.getElementById("middleScore").value;
-        if(stu==""){
-            alert("未选中学生");
-            return false;
-        }else {
-            if (a == "") {
-                alert("成绩为空！无法提交。");
-                return false;
-            } else {
-                alert("提交成功！");
-                return true;
+
+        var isSubmitFile = document.getElementById("isSubmitFile").value;
+        var score = document.getElementById("middleScore").value;
+
+        if(isSubmitFile=="未提交文件"){
+            document.getElementById("isSubmit").value="无法提交";
+            alert("该生未提交文件！");
+        }else{
+            if((isNaN(score)||score<0||score>100||!(/^\d+$/.test(score)))){
+                document.getElementById("isSubmit").value="无法提交";
+                alert("成绩需要为0~100的整数！");
+            }else{
+                document.getElementById("isSubmit").value="提交";
             }
         }
     }

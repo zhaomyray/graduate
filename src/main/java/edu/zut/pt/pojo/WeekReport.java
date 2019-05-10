@@ -21,6 +21,9 @@ public class WeekReport {
     private String isAfter;
     //周报评语
     private String weekReview;
+    //周报文件路径
+    private String weekReportFilePath;
+
 
     public int getId() {
         return id;
@@ -52,6 +55,14 @@ public class WeekReport {
 
     public String getWeekReview() {
         return weekReview;
+    }
+
+    public String getWeekReportFilePath() {
+        return weekReportFilePath;
+    }
+
+    public void setWeekReportFilePath(String weekReportFilePath) {
+        this.weekReportFilePath = weekReportFilePath;
     }
 
     public void setId(int id) {

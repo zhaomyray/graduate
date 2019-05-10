@@ -44,36 +44,35 @@
         <tbody>
         <tr class="text-c" th:each="comDailyScore,comDailyScoreStat:${studentComDailyScoreList}" th:inline="none">
             <td th:text="${comDailyScoreStat.count}"/>
-            <td th:text="${comDailyScore.comSno}"/>
+            <td th:text="${comDailyScore.sno}"/>
             <td th:text="${comDailyScore.dailyScore}"/>
             <td>
-                <a href="javascript:void(0)" th:onclick="inputDailyScore('[[${comDailyScore.comSno}]]')">评分</a>
+                <a href="javascript:void(0)" th:onclick="inputDailyScore('[[${comDailyScore.sno}]]','[[${comDailyScore.middleFilePath}]]','[[${comDailyScore.dailyScore}]]')">评分</a>
             </td>
         </tr>
         </tbody>
     </table>
 </div>
 
-<form class="form form-horizontal" id="form_teaCom_stuDailyScore" method="post"  th:action="@{/comTeaInsertDailyScore}" onsubmit="submit_sure()">
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <input type="text" class="input-text" value="" placeholder="" id="dailyScoreSno" name="dailyScoreSno" readonly="true">
-        </div>
-    </div>
-    <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>
-        <div class="formControls col-xs-8 col-sm-9">
-            <input type="text" class="input-text" value="0" placeholder="分数为整数" id="dailyScore" name="dailyScore">
-        </div>
-    </div>
-    <div class="row cl">
-        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-            <input class="btn btn-primary radius" type="submit" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
-            <!--<input class="btn btn-primary radius" type="reset" value="&nbsp;&nbsp;取消&nbsp;&nbsp;">-->
-        </div>
-    </div>
-</form>
+<!--<form class="form form-horizontal" id="form_teaCom_stuDailyScore" method="post"  th:action="@{/comTeaInsertDailyScore}" onsubmit="submit_sure()">-->
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<input type="text" class="input-text" value="" placeholder="" id="dailyScoreSno" name="dailyScoreSno" readonly="true">-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row cl">-->
+        <!--<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>-->
+        <!--<div class="formControls col-xs-8 col-sm-9">-->
+            <!--<input type="text" class="input-text" value="0" placeholder="分数为整数" id="dailyScore" name="dailyScore">-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row cl">-->
+        <!--<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">-->
+            <!--<input class="btn btn-primary radius" type="submit" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</form>-->
 <!--_footer 作为公共模版分离出去-->
 <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
@@ -100,25 +99,73 @@
         layer_show(title,url,w,h);
     }
 
-    function inputDailyScore(val1){
-        document.getElementById("dailyScoreSno").value=val1;
+    function inputDailyScore(val1,val2,val3){
+        var sno = val1.substring(1,val1.length-1);
+        var isScore = val2.substring(1,val2.length-1);
+        // var score1 = val3.substring(1,val3.length-1);
+
+        if(isScore=="禁止打分"){//如果系统已经导入分数，则无法进行打分操作
+            alert("成绩由系统录入，禁止操作!");
+            document.getElementById("isSubmit").value="无法提交";
+        }else{//如果系统没有录入分数，那么可以进入打分窗口
+            layer.open({
+                type: 1,
+                area: ['550px', '300px'],
+                fix: false, //不固定
+                btnAlign: 'c',
+                maxmin: true,
+                shade: 0.4,
+                title: '周报信息',
+                content:'<form class="form form-horizontal" id="form_teaCom_stuDailyScore" method="post"  th:action="@{/comTeaInsertDailyScore}" onsubmit="submit_sure()">\n' +
+                    '    <div class="row cl">\n' +
+                    '        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学号：</label>\n' +
+                    '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                    '            <input type="text" class="input-text" value="'+sno+'" placeholder="" id="dailyScoreSno" name="dailyScoreSno" readonly="true">\n' +
+                    '            <input type="text" value="'+isScore+'" id="isDailyScore" name="isDailyScore" style="display: none">\n' +
+                    '        </div>\n' +
+                    '    </div>\n' +
+                    '    <div class="row cl">\n' +
+                    '        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分数：</label>\n' +
+                    '        <div class="formControls col-xs-8 col-sm-9">\n' +
+                    '            <input type="text" class="input-text" value="'+val3+'" placeholder="分数为整数" id="dailyScore" name="dailyScore">\n' +
+                    '        </div>\n' +
+                    '    </div>\n' +
+                    '    <div class="row cl">\n' +
+                    '        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">\n' +
+                    '            <input type="text" value="" id="isSubmit" name="isSubmit" style="display: none">\n' +
+                    '            <input class="btn btn-primary radius" id="submitComStuDailyScore" type="submit" onclick="submit_sure()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;" style="display: none">\n' +
+                    '        </div>\n' +
+                    '    </div>\n' +
+                    '</form>',
+                btn:['提交','取消'],
+                btn1:function(){
+                    $('#submitComStuDailyScore').submit();
+
+                    var sno = document.getElementById("dailyScoreSno").value;
+                    var score = document.getElementById("dailyScore").value;
+                    var isSubmit = document.getElementById("isSubmit").value;
+
+                    $.post("/comTeaInsertDailyScore/"+sno+","+score+","+isSubmit);
+                    if(isSubmit=="提交"){
+                        layer.closeAll();
+                    }
+
+                }
+            });
+        }
+
+
     }
 
     function submit_sure(){
-        var stu = document.getElementById("dailyScoreSno").value;
-        var a = document.getElementById("dailyScore").value;
-        if(stu==""){
-            alert("未选中学生");
-            return false;
-        }else {
-            if (a == "") {
-                alert("成绩为空！无法提交。");
-                return false;
-            } else {
-                alert("提交成功！");
-                return true;
+        var score = document.getElementById("dailyScore").value;
+
+            if((isNaN(score)||score<0||score>100||!(/^\d+$/.test(score)))){
+                document.getElementById("isSubmit").value="无法提交";
+                alert("成绩需要为0~100的整数！");
+            }else{
+                document.getElementById("isSubmit").value="提交";
             }
-        }
     }
 </script>
 </body>
